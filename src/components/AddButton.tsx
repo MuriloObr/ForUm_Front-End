@@ -1,0 +1,21 @@
+import { MouseEventHandler } from "react"
+
+interface AddButtonProps {
+  text: string
+  onClick: MouseEventHandler<HTMLButtonElement>
+  className?: string
+}
+
+export function AddButton({ text, onClick, className = "" }: AddButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      className={
+        "sticky bottom-8 ml-auto h-fit w-fit py-2 px-4 text-white bg-emerald-500 font-bold rounded-md text-lg" +
+        ` ${className}`
+      }
+    >
+      {text}
+    </button>
+  )
+}
