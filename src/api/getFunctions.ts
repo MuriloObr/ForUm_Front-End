@@ -9,7 +9,9 @@ export const getData = {
   profile
 }
 
-export const API_URL = "http://127.0.0.1:8080/api"
+export const old_API_URL = "http://127.0.0.1:8080/api"
+
+export const API_URL = "https://backend-forum.onrender.com/api"
 
 interface Comment {
   answer: boolean,
