@@ -56,10 +56,12 @@ export interface ApiRes<T> {
   1: T
 }
 
-async function allPosts(): Promise<Post[]> {
+async function allPosts(): Promise<Post[] | []> {
   const request = await axios.get(`${API_URL}/posts`)
   const data: ApiRes<Post[]> = request.data
   
+  if (data === undefined) return []
+
   return data[1]
 }
 

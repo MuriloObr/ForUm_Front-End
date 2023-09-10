@@ -14,6 +14,7 @@ export function App() {
   const { isLoading, isError, data, error } = useQuery({
     queryKey: ["posts"],
     queryFn: getData.allPosts,
+    retry: 5,
     staleTime: 30 * 60 * 1000, // 30 minute
   })
 
@@ -75,7 +76,7 @@ export function App() {
               )
             })
           ) : data === undefined ? (
-            <div>No posts to see... {data}</div>
+            <div>No posts to see...</div>
           ) : (
             data.map((post) => {
               return (
