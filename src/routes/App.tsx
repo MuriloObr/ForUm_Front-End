@@ -55,49 +55,47 @@ export function App() {
       <Header />
       <main className="w-full p-5 bg-slate-800 flex-1">
         <ul className="h-fit flex flex-col gap-5">
-          {search.length > 0
-            ? filteredPosts?.map((post) => {
-                return (
-                  <Post.Root
-                    username={post.user.username}
-                    postID={post.id}
-                    key={post.id}
-                  >
-                    <Post.Header closed={post.closed}>
-                      {post.tittle}
-                    </Post.Header>
-                    <Post.Content>{post.content}</Post.Content>
-                    <Post.Footer
-                      views={post.views.length}
-                      likes={post.likes.length}
-                      createdAt={post.created_at}
-                      nickname={post.user.nickname}
-                    />
-                  </Post.Root>
-                )
-              })
-            : data === undefined
-            ? ""
-            : data.map((post) => {
-                return (
-                  <Post.Root
-                    username={post.user.username}
-                    postID={post.id}
-                    key={post.id}
-                  >
-                    <Post.Header closed={post.closed}>
-                      {post.tittle}
-                    </Post.Header>
-                    <Post.Content>{post.content}</Post.Content>
-                    <Post.Footer
-                      views={post.views.length}
-                      likes={post.likes.length}
-                      createdAt={post.created_at}
-                      nickname={post.user.nickname}
-                    />
-                  </Post.Root>
-                )
-              })}
+          {search.length > 0 ? (
+            filteredPosts?.map((post) => {
+              return (
+                <Post.Root
+                  username={post.user.username}
+                  postID={post.id}
+                  key={post.id}
+                >
+                  <Post.Header closed={post.closed}>{post.tittle}</Post.Header>
+                  <Post.Content>{post.content}</Post.Content>
+                  <Post.Footer
+                    views={post.views.length}
+                    likes={post.likes.length}
+                    createdAt={post.created_at}
+                    nickname={post.user.nickname}
+                  />
+                </Post.Root>
+              )
+            })
+          ) : data === undefined ? (
+            <div>No posts to see...</div>
+          ) : (
+            data.map((post) => {
+              return (
+                <Post.Root
+                  username={post.user.username}
+                  postID={post.id}
+                  key={post.id}
+                >
+                  <Post.Header closed={post.closed}>{post.tittle}</Post.Header>
+                  <Post.Content>{post.content}</Post.Content>
+                  <Post.Footer
+                    views={post.views.length}
+                    likes={post.likes.length}
+                    createdAt={post.created_at}
+                    nickname={post.user.nickname}
+                  />
+                </Post.Root>
+              )
+            })
+          )}
           <AddButton
             text="+ Post"
             className="mr-10"
