@@ -75,7 +75,7 @@ export function App() {
               )
             })
           ) : data === undefined ? (
-            <div>No posts to see...</div>
+            <div>No posts to see... {data}</div>
           ) : (
             data.map((post) => {
               return (
