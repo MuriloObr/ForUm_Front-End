@@ -34,7 +34,7 @@ export function App() {
         )
       : []
 
-  console.log("Renderizou", search)
+  console.log(data)
 
   async function Postar() {
     const tittle = inputTittleRef.current?.value
