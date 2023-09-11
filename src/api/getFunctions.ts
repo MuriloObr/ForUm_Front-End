@@ -9,9 +9,9 @@ export const getData = {
   profile
 }
 
-export const DEVELOPMENT_API_URL = "http://127.0.0.1:8080/api"
+export const DEVELOPMENT_API_URL = "https://backend-forum.onrender.com/api"
 
-export const API_URL = "https://backend-forum.onrender.com/api"
+export const API_URL = "http://127.0.0.1:8080/api"
 
 interface Comment {
   answer: boolean,
@@ -60,7 +60,7 @@ async function allPosts(): Promise<Post[] | []> {
   const request = await axios.get(`${API_URL}/posts`)
   const data: ApiRes<Post[]> = request.data
   
-  if (data === undefined) return []
+  if (request.status === 204)  return []
 
   return data[1]
 }
@@ -76,9 +76,8 @@ async function allCommentsFromPost(id: number): Promise<Comment[] | []> {
   const request = await axios.get(`${API_URL}/comments/${id}`, {withCredentials: true})
   const data: ApiRes<Comment[]> = request.data
 
-  if (request.status === 204) {
-    return []
-  }
+  if (request.status === 204) return []
+  
   return data[1]
 }
 

@@ -75,6 +75,10 @@ const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
   )
 })
 
+function ResField({ res, color }: { res: string; color: string }) {
+  return <span className={`${color} text-xl h-8`}>{res}</span>
+}
+
 const CautionMessage = forwardRef<HTMLInputElement>(function CautionMessage(
   _,
   ref
@@ -106,4 +110,5 @@ const CautionMessage = forwardRef<HTMLInputElement>(function CautionMessage(
 export const Form = {
   Root,
   Field,
+  ResField,
 }

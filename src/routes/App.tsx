@@ -35,7 +35,7 @@ export function App() {
         )
       : []
 
-  console.log(data === undefined)
+  console.log(data)
 
   async function Postar() {
     const tittle = inputTittleRef.current?.value
