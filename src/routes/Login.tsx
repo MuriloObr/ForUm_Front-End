@@ -9,7 +9,10 @@ export function Login() {
   const userRef = useRef<HTMLInputElement>(null)
   const passwordRef = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
-  const [res, setRes] = useState("")
+  const [res, setRes] = useState({
+    message: "",
+    color: "white",
+  })
   const { mutate, isLoading } = useMutation({
     mutationFn: login,
   })
@@ -22,7 +25,10 @@ export function Login() {
     if (res.status === 200) {
       navigate(`/profile`)
     } else if (res.status === 204) {
-      setRes("Perfil não encontrado")
+      setRes({
+        message: "Perfil não encontrado",
+        color: "text-red-500",
+      })
     }
   }
 
@@ -35,7 +41,7 @@ export function Login() {
         type="password"
         ref={passwordRef}
       />
-      <Form.ResField res={res} color="text-red-500" />
+      <Form.ResField res={res.message} color={res.color} />
       {isLoading ? <CircleNotch className="absolute inset-0" /> : ""}
     </Form.Root>
   )
