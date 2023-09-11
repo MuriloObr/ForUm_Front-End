@@ -29,7 +29,7 @@ export function Register() {
     if (res.status === 201) {
       console.log(res.data)
       navigate(`/login`)
-    } else {
+    } else if (res.status !== 201) {
       setRes({
         message: "Algo deu errado",
         color: "text-red-500",
