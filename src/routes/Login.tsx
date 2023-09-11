@@ -42,7 +42,14 @@ export function Login() {
         ref={passwordRef}
       />
       <Form.ResField res={res.message} color={res.color} />
-      {isLoading ? <CircleNotch className="absolute inset-0" /> : ""}
+      {isLoading ? (
+        <CircleNotch
+          size={80}
+          className="absolute inset-0 m-auto animate-spin"
+        />
+      ) : (
+        ""
+      )}
     </Form.Root>
   )
 }
