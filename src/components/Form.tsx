@@ -1,18 +1,7 @@
-import { ReactNode, forwardRef, useRef } from "react"
+import { forwardRef, useRef } from 'react'
+import { MyFormProps } from '../types/typesComponents'
 
-interface RootProps {
-  action: () => void
-  cautionMessage?: true
-  children: ReactNode
-}
-
-interface FieldProps {
-  label: string
-  type: string
-  name: string
-}
-
-function Root({ action, cautionMessage, children }: RootProps) {
+function Root({ action, cautionMessage, children }: MyFormProps['root']) {
   const cautionRef = useRef<HTMLInputElement>(null)
 
   return (
@@ -32,12 +21,12 @@ function Root({ action, cautionMessage, children }: RootProps) {
           console.log(action)
         }}
         className={
-          "h-fit w-1/5 flex flex-col items-center justify-center rounded-md text-zinc-900 font-bold" +
-          (cautionMessage ? " gap-1 text-md" : " gap-8 text-3xl")
+          'h-fit w-1/5 flex flex-col items-center justify-center rounded-md text-zinc-900 font-bold' +
+          (cautionMessage ? ' gap-1 text-md' : ' gap-8 text-3xl')
         }
       >
         {children}
-        {cautionMessage ? <CautionMessage ref={cautionRef} /> : ""}
+        {cautionMessage ? <CautionMessage ref={cautionRef} /> : ''}
         <div
           className="py-3 px-2 relative 
           after:absolute after:inline-block after:inset-x-0 after:h-0.5 after:w-full after:top-1 after:scale-x-0 after:origin-left after:bg-zinc-900 after:transition-all
@@ -46,7 +35,7 @@ function Root({ action, cautionMessage, children }: RootProps) {
         >
           <input
             type="submit"
-            value={cautionMessage ? "Registrar" : "Entrar"}
+            value={cautionMessage ? 'Registrar' : 'Entrar'}
             className="text-2xl cursor-pointer"
           />
         </div>
@@ -55,9 +44,9 @@ function Root({ action, cautionMessage, children }: RootProps) {
   )
 }
 
-const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
+const Field = forwardRef<HTMLInputElement, MyFormProps['field']>(function Field(
   { label, type, name },
-  ref
+  ref,
 ) {
   return (
     <div className="flex flex-col w-full">
@@ -79,33 +68,32 @@ function ResField({ res, color }: { res: string; color: string }) {
   return <span className={`${color} text-xl h-8`}>{res}</span>
 }
 
-const CautionMessage = forwardRef<HTMLInputElement>(function CautionMessage(
-  _,
-  ref
-) {
-  return (
-    <>
-      <legend>
-        <h2 className="text-red-500 text-xl">Aviso!!</h2>
-        <p className="text-lg text-justify">
-          Este site utiliza algumas formas de manter seus dados seguros, porém
-          evite utilizar qualquer informação real ou sensível este é somente um
-          projeto de exemplo, utilize dados fictícios.
-        </p>
-      </legend>
-      <label className="text-lg font-normal flex items-center gap-2 self-start">
-        Li o aviso acima e agi de acordo
-        <input
-          type="checkbox"
-          name="aviso"
-          id="avisoDados"
-          className="h-5 w-5"
-          ref={ref}
-        />
-      </label>
-    </>
-  )
-})
+const CautionMessage = forwardRef<HTMLInputElement>(
+  function CautionMessage(_, ref) {
+    return (
+      <>
+        <legend>
+          <h2 className="text-red-500 text-xl">Aviso!!</h2>
+          <p className="text-lg text-justify">
+            Este site utiliza algumas formas de manter seus dados seguros, porém
+            evite utilizar qualquer informação real ou sensível este é somente
+            um projeto de exemplo, utilize dados fictícios.
+          </p>
+        </legend>
+        <label className="text-lg font-normal flex items-center gap-2 self-start">
+          Li o aviso acima e agi de acordo
+          <input
+            type="checkbox"
+            name="aviso"
+            id="avisoDados"
+            className="h-5 w-5"
+            ref={ref}
+          />
+        </label>
+      </>
+    )
+  },
+)
 
 export const Form = {
   Root,

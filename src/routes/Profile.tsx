@@ -1,17 +1,16 @@
-import { useQuery } from "@tanstack/react-query"
-import { getData } from "../api/getFunctions"
-import { Header } from "../components/Header"
-import { UserComponent } from "../components/UserComponent"
-import { Loading } from "../components/Loading"
-import { Error } from "../components/Error"
-import { postData } from "../api/postFunctions"
-import { SignOut } from "@phosphor-icons/react"
-import { Post } from "../components/Post"
-import { useNavigate } from "react-router-dom"
+import { useQuery } from '@tanstack/react-query'
+import { getData } from '../api/getFunctions'
+import { UserComponent } from '../components/UserComponent'
+import { Loading } from '../components/Loading'
+import { Error } from '../components/Error'
+import { postData } from '../api/postFunctions'
+import { SignOut } from '@phosphor-icons/react'
+import { Post } from '../components/Post'
+import { useNavigate } from 'react-router-dom'
 
 export function Profile() {
   const { isLoading, isError, data, error } = useQuery({
-    queryKey: ["user"],
+    queryKey: ['user'],
     queryFn: getData.profile,
     retry: 2,
     refetchOnWindowFocus: false,
@@ -28,10 +27,9 @@ export function Profile() {
   }
 
   return (
-    <div className="h-screen-d">
-      <Header />
+    <main>
       {data[0] === undefined ? (
-        ""
+        ''
       ) : (
         <>
           <UserComponent.Root>
@@ -43,7 +41,7 @@ export function Profile() {
             >
               <ul className="w-[60vw] flex flex-col gap-4">
                 {data[1] === undefined
-                  ? ""
+                  ? ''
                   : data[1].map((post) => (
                       <Post.Root
                         username={post.user.username}
@@ -70,7 +68,7 @@ export function Profile() {
             onClick={() => {
               const res = postData.logout()
               console.log(res)
-              navigate("/")
+              navigate('/')
             }}
           >
             Logout
@@ -78,6 +76,6 @@ export function Profile() {
           </button>
         </>
       )}
-    </div>
+    </main>
   )
 }

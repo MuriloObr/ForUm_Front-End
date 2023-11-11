@@ -1,19 +1,20 @@
-import { useQuery } from "@tanstack/react-query"
-import { postData } from "../api/postFunctions"
-import searchIcon from "/searchSvg.svg"
-import { useContext } from "react"
-import { SearchContext } from "../context/SearchContext"
+/* eslint-disable import/no-absolute-path */
+import { useQuery } from '@tanstack/react-query'
+import { postData } from '../api/postFunctions'
+import searchIcon from '/searchSvg.svg'
+import { useContext } from 'react'
+import { SearchContext } from '../context/SearchContext'
 
 export function Header() {
   const { data } = useQuery({
-    queryKey: ["loggedIn"],
+    queryKey: ['loggedIn'],
     queryFn: postData.loggedIn,
   })
 
   const { search, setSearch } = useContext(SearchContext)
 
   return (
-    <div className="p-3 flex items-center justify-between border-b-2 border-zinc-200">
+    <header className="p-3 flex items-center justify-between border-b-2 border-zinc-200">
       <div className="flex items-center">
         <img src="/forUm.svg" alt="Logo" className="h-10 w-10" />
         <span className="font-bold text-2xl text-zinc-900 select-none">
@@ -77,6 +78,6 @@ export function Header() {
           </a>
         )}
       </nav>
-    </div>
+    </header>
   )
 }

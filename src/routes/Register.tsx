@@ -1,9 +1,9 @@
-import { useRef, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { postData } from "../api/postFunctions"
-import { Form } from "../components/Form"
-import { useMutation } from "@tanstack/react-query"
-import { CircleNotch } from "@phosphor-icons/react"
+import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { postData } from '../api/postFunctions'
+import { Form } from '../components/Form'
+import { useMutation } from '@tanstack/react-query'
+import { CircleNotch } from '@phosphor-icons/react'
 
 export function Register() {
   const usernameRef = useRef<HTMLInputElement>(null)
@@ -12,8 +12,8 @@ export function Register() {
   const passwordRef = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
   const [res, setRes] = useState({
-    message: "",
-    color: "white",
+    message: '',
+    color: 'white',
   })
   const { mutate, isLoading } = useMutation({
     mutationFn: register,
@@ -31,8 +31,8 @@ export function Register() {
       navigate(`/login`)
     } else if (res.status === 409) {
       setRes({
-        message: "Algo deu errado",
-        color: "text-red-500",
+        message: 'Algo deu errado',
+        color: 'text-red-500',
       })
     }
   }
@@ -67,7 +67,7 @@ export function Register() {
           />
         </div>
       ) : (
-        ""
+        ''
       )}
     </Form.Root>
   )

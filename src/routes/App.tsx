@@ -1,18 +1,17 @@
-import { useContext, useRef, useState } from "react"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { SearchContext } from "../context/SearchContext.tsx"
-import { getData } from "../api/getFunctions"
-import { Header } from "../components/Header"
-import { Post } from "../components/Post"
-import { Loading } from "../components/Loading"
-import { Error } from "../components/Error"
-import { AddButton } from "../components/AddButton"
-import { AddModal } from "../components/AddModal"
-import { postData } from "../api/postFunctions"
+import { useContext, useRef, useState } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { SearchContext } from '../context/SearchContext.tsx'
+import { getData } from '../api/getFunctions'
+import { Post } from '../components/Post'
+import { Loading } from '../components/Loading'
+import { Error } from '../components/Error'
+import { AddButton } from '../components/AddButton'
+import { AddModal } from '../components/AddModal'
+import { postData } from '../api/postFunctions'
 
 export function App() {
   const { isLoading, isError, data, error } = useQuery({
-    queryKey: ["posts"],
+    queryKey: ['posts'],
     queryFn: getData.allPosts,
     retry: 5,
     staleTime: 30 * 60 * 1000, // 30 minute
@@ -26,12 +25,12 @@ export function App() {
   const inputTittleRef = useRef<HTMLInputElement>(null)
   const inputTextareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const [postStatus, setPostStatus] = useState<string>("")
+  const [postStatus, setPostStatus] = useState<string>('')
 
   const filteredPosts =
     search.length > 0
       ? data?.filter((post) =>
-          post.tittle.toLowerCase().includes(search.toLowerCase())
+          post.tittle.toLowerCase().includes(search.toLowerCase()),
         )
       : []
 
@@ -53,7 +52,6 @@ export function App() {
 
   return (
     <div className="flex flex-col h-screen-d">
-      <Header />
       <main className="w-full p-5 bg-slate-800 flex-1">
         <ul className="h-fit flex flex-col gap-5">
           {search.length > 0 ? (
@@ -110,11 +108,11 @@ export function App() {
               const posted = await Postar()
               if (posted === true) {
                 modalRef.current?.close()
-                queryClient.invalidateQueries({ queryKey: ["posts"] })
+                queryClient.invalidateQueries({ queryKey: ['posts'] })
                 return
               }
               if (posted === 401)
-                setPostStatus("Voçê precisa estar logado para postar!")
+                setPostStatus('Voçê precisa estar logado para postar!')
             }}
           >
             <AddModal.Field label="Titulo" type="text" ref={inputTittleRef} />

@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState } from "react"
+import { createContext, ReactNode, useState } from 'react'
 
 interface SearchProps {
   search: string
@@ -6,12 +6,12 @@ interface SearchProps {
 }
 
 export const SearchContext = createContext<SearchProps>({
-  search: "",
+  search: '',
   setSearch: () => {},
 })
 
 export const SearchProvider = ({ children }: { children: ReactNode }) => {
-  const [search, setSearch] = useState("")
+  const [search, setSearch] = useState('')
 
   function change(value: string) {
     setSearch(value)

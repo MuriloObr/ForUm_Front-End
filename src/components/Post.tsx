@@ -1,46 +1,28 @@
-import { Check, X, Target, ThumbsUp, TrendUp } from "@phosphor-icons/react"
-import { ReactNode } from "react"
+import { Check, X, Target, ThumbsUp, TrendUp } from '@phosphor-icons/react'
+import { PostProps } from '../types/typesComponents'
 
 function verifyNumbers(num = 0, rel = false) {
   if (rel) {
     const number = (num * 100).toFixed()
-    if (isNaN(parseInt(number))) return "0%"
+    if (isNaN(parseInt(number))) return '0%'
     return `${number}%`
   }
   if (num > 1000000) {
-    return `${num.toLocaleString("pt-BR").toString().slice(0, -6)} M`
+    return `${num.toLocaleString('pt-BR').toString().slice(0, -6)} M`
   }
   if (num > 1000) {
-    return `${num.toLocaleString("pt-BR").toString().slice(0, -2)} k`
+    return `${num.toLocaleString('pt-BR').toString().slice(0, -2)} k`
   } else return num
 }
 
 export const Post = {
   Root,
-  Header: PostHeader,
-  Content: PostContent,
-  Footer: PostFooter,
+  Header,
+  Content,
+  Footer,
 }
 
-interface PostRootProps {
-  children: ReactNode
-  username: string
-  postID: number
-}
-
-interface PostHeaderProps {
-  children: ReactNode
-  closed: boolean
-}
-
-interface PostFooterProps {
-  views: number
-  likes: number
-  nickname: string
-  createdAt: string
-}
-
-function Root({ children, username, postID }: PostRootProps) {
+function Root({ children, username, postID }: PostProps['root']) {
   return (
     <a
       href={`/${username}/${postID}`}
@@ -52,7 +34,7 @@ function Root({ children, username, postID }: PostRootProps) {
   )
 }
 
-function PostHeader({ children, closed }: PostHeaderProps) {
+function Header({ children, closed }: PostProps['header']) {
   return (
     <div className="flex items-center mt-1">
       <h2 className="text-xl group-hover/post:underline decoration-2">
@@ -60,23 +42,23 @@ function PostHeader({ children, closed }: PostHeaderProps) {
       </h2>
       <span
         className={
-          "ml-auto flex items-center gap-2 p-1 rounded-md text-white font-bold" +
-          ` ${closed ? "bg-emerald-500" : "bg-purple-600"}`
+          'ml-auto flex items-center gap-2 p-1 rounded-md text-white font-bold' +
+          ` ${closed ? 'bg-emerald-500' : 'bg-purple-600'}`
         }
       >
         {closed
-          ? ["Closed", <X size={18} weight="bold" />]
-          : ["Open", <Check size={18} weight="bold" />]}
+          ? ['Closed', <X size={18} weight="bold" key={'iconX'} />]
+          : ['Open', <Check size={18} weight="bold" key={'iconOpen'} />]}
       </span>
     </div>
   )
 }
 
-function PostContent({ children }: { children: ReactNode }) {
+function Content({ children }: PostProps['content']) {
   return <p className="line-clamp-2">{children}</p>
 }
 
-function PostFooter({ views, likes, nickname, createdAt }: PostFooterProps) {
+function Footer({ views, likes, nickname, createdAt }: PostProps['footer']) {
   const date = new Date(createdAt)
   return (
     <div className="mt-auto">

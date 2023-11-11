@@ -1,25 +1,10 @@
-import { MouseEventHandler, ReactNode, forwardRef } from "react"
-import { AddButton } from "./AddButton"
+import { forwardRef } from 'react'
+import { AddButton } from './AddButton'
+import { AddModalProps } from '../types/typesComponents'
 
-interface RootProps {
-  children: ReactNode
-  onSubmit: MouseEventHandler
-  submitLabel: string
-  res: string
-}
-
-interface FieldProps {
-  type: string
-  label: string
-}
-
-interface AreaProps {
-  label: string
-}
-
-const Root = forwardRef<HTMLDialogElement, RootProps>(function Root(
+const Root = forwardRef<HTMLDialogElement, AddModalProps['root']>(function Root(
   { children, onSubmit, submitLabel, res },
-  ref
+  ref,
 ) {
   return (
     <dialog ref={ref} className="w-1/3 rounded-md backdrop:bg-slate-900/80">
@@ -36,36 +21,34 @@ const Root = forwardRef<HTMLDialogElement, RootProps>(function Root(
   )
 })
 
-const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
-  { type, label },
-  ref
-) {
-  return (
-    <label className="flex flex-col text-black text-2xl">
-      {label}↴
-      <input
-        type={type}
-        ref={ref}
-        className="w-full px-2 bg-transparent border-b-2 border-black text-2xl leading-10 font-normal outline-none"
-      />
-    </label>
-  )
-})
+const Field = forwardRef<HTMLInputElement, AddModalProps['field']>(
+  function Field({ type, label }, ref) {
+    return (
+      <label className="flex flex-col text-black text-2xl">
+        {label}↴
+        <input
+          type={type}
+          ref={ref}
+          className="w-full px-2 bg-transparent border-b-2 border-black text-2xl leading-10 font-normal outline-none"
+        />
+      </label>
+    )
+  },
+)
 
-const Area = forwardRef<HTMLTextAreaElement, AreaProps>(function Area(
-  { label },
-  ref
-) {
-  return (
-    <label className="flex flex-col text-black text-2xl">
-      {label}↴
-      <textarea
-        ref={ref}
-        className="w-full px-2 bg-transparent border-b-2 border-black text-2xl leading-10 font-normal outline-none"
-      />
-    </label>
-  )
-})
+const Area = forwardRef<HTMLTextAreaElement, AddModalProps['area']>(
+  function Area({ label }, ref) {
+    return (
+      <label className="flex flex-col text-black text-2xl">
+        {label}↴
+        <textarea
+          ref={ref}
+          className="w-full px-2 bg-transparent border-b-2 border-black text-2xl leading-10 font-normal outline-none"
+        />
+      </label>
+    )
+  },
+)
 
 export const AddModal = {
   Root,

@@ -1,5 +1,3 @@
-import { Header } from "../components/Header"
-
 export function About() {
-  return <Header />
+  return <div>About Page</div>
 }

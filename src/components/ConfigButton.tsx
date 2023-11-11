@@ -1,14 +1,10 @@
-import { GearSix, X } from "@phosphor-icons/react"
-import * as Popover from "@radix-ui/react-popover"
-import { postData } from "../api/postFunctions"
-import { useQueryClient } from "@tanstack/react-query"
-import { useContext } from "react"
-import { AnswerContext } from "../context/AnswerContext"
-
-interface ConfigProps {
-  id: number
-  closed: boolean
-}
+import * as Popover from '@radix-ui/react-popover'
+import { GearSix, X } from '@phosphor-icons/react'
+import { postData } from '../api/postFunctions'
+import { useQueryClient } from '@tanstack/react-query'
+import { useContext } from 'react'
+import { AnswerContext } from '../context/AnswerContext'
+import { ConfigProps } from '../types/typesComponents'
 
 export function ConfigButton({ id, closed }: ConfigProps) {
   const queryClient = useQueryClient()
@@ -17,10 +13,8 @@ export function ConfigButton({ id, closed }: ConfigProps) {
   async function CloseOpenPost() {
     const res = await postData.closeOpenPost(id)
     if (res === true) {
-      queryClient.invalidateQueries({ queryKey: ["post"] })
-      return
+      queryClient.invalidateQueries({ queryKey: ['post'] })
     }
-    return
   }
 
   return (
@@ -34,18 +28,18 @@ export function ConfigButton({ id, closed }: ConfigProps) {
           {
             <button
               className={
-                "p-1 hover:brightness-90 rounded-md" +
-                (closed ? " bg-emerald-500" : " bg-purple-600")
+                'p-1 hover:brightness-90 rounded-md' +
+                (closed ? ' bg-emerald-500' : ' bg-purple-600')
               }
               onClick={() => CloseOpenPost()}
             >
-              Mark as {closed ? "Opened" : "Closed"}
+              Mark as {closed ? 'Opened' : 'Closed'}
             </button>
           }
           <button
             className={
-              "hover:brightness-90 rounded-md p-1" +
-              (answer ? " bg-slate-800" : " bg-slate-600")
+              'hover:brightness-90 rounded-md p-1' +
+              (answer ? ' bg-slate-800' : ' bg-slate-600')
             }
             onClick={() => setAnswer()}
           >

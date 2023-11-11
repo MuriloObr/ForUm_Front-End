@@ -1,24 +1,13 @@
-import { ReactNode } from "react"
-import { getRandomAvatar } from "../api/randomAvatar"
+/* eslint-disable camelcase */
+import { getRandomAvatar } from '../api/randomAvatar'
+import { UserCompProps } from '../types/typesComponents'
 
 export const UserComponent = {
   Root,
   Content,
 }
 
-interface RootProps {
-  children: ReactNode
-}
-
-interface ContentProps {
-  username: string
-  nickname: string
-  email: string
-  children: ReactNode
-  created_at: string
-}
-
-function Root({ children }: RootProps) {
+function Root({ children }: UserCompProps['root']) {
   return <div className="h-full p-8 flex justify-center">{children}</div>
 }
 
@@ -28,7 +17,7 @@ function Content({
   email,
   children,
   created_at,
-}: ContentProps) {
+}: UserCompProps['content']) {
   const date = new Date(created_at)
 
   return (
