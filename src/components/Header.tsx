@@ -5,7 +5,7 @@ import searchIcon from '/searchSvg.svg'
 import { useContext } from 'react'
 import { SearchContext } from '../context/SearchContext'
 
-export function Header() {
+export function Header({ withoutSearchBar }: { withoutSearchBar?: true }) {
   const { data } = useQuery({
     queryKey: ['loggedIn'],
     queryFn: postData.loggedIn,
@@ -21,16 +21,19 @@ export function Header() {
           ForUm
         </span>
       </div>
-
-      <div className="flex items-center w-2/3 ml-auto mr-5 py-1 px-2 bg-zinc-300/70 rounded-lg border border-[#fafafa] focus-within:border-zinc-900/50">
-        <img src={searchIcon} alt="Buscar" className="h-6 w-6" />
-        <input
-          type="text"
-          className="w-full ml-2 bg-transparent text-lg text-zinc-900 outline-none"
-          value={search}
-          onChange={(e) => setSearch(e.currentTarget.value)}
-        />
-      </div>
+      {withoutSearchBar ? (
+        ''
+      ) : (
+        <div className="flex items-center w-2/3 ml-auto mr-5 py-1 px-2 bg-zinc-300/70 rounded-lg border border-[#fafafa] focus-within:border-zinc-900/50">
+          <img src={searchIcon} alt="Buscar" className="h-6 w-6" />
+          <input
+            type="text"
+            className="w-full ml-2 bg-transparent text-lg text-zinc-900 outline-none"
+            value={search}
+            onChange={(e) => setSearch(e.currentTarget.value)}
+          />
+        </div>
+      )}
 
       <nav className="text-xl text-zinc-900 flex gap-x-16">
         <a

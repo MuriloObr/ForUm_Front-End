@@ -12,7 +12,7 @@ export function Profile() {
   const { isLoading, isError, data, error } = useQuery({
     queryKey: ['user'],
     queryFn: getData.profile,
-    retry: 2,
+    retry: 1,
     refetchOnWindowFocus: false,
   })
 
@@ -28,21 +28,21 @@ export function Profile() {
 
   return (
     <main>
-      {data[0] === undefined ? (
+      {data.user === undefined ? (
         ''
       ) : (
         <>
           <UserComponent.Root>
             <UserComponent.Content
-              username={data[0].username}
-              nickname={data[0].nickname}
-              email={data[0].email}
-              created_at={data[0].created_at}
+              username={data.user.username}
+              nickname={data.user.nickname}
+              email={data.user.email}
+              created_at={data.user.created_at}
             >
               <ul className="w-[60vw] flex flex-col gap-4">
-                {data[1] === undefined
+                {data.posts === undefined
                   ? ''
-                  : data[1].map((post) => (
+                  : data.posts.map((post) => (
                       <Post.Root
                         username={post.user.username}
                         postID={post.id}

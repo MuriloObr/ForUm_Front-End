@@ -37,6 +37,7 @@ const router = createBrowserRouter([
     path: '/profile',
     element: (
       <div className="flex flex-col h-screen-d">
+        <Header withoutSearchBar />
         <Profile />
       </div>
     ),
@@ -45,6 +46,7 @@ const router = createBrowserRouter([
     path: '/about',
     element: (
       <div className="flex flex-col h-screen-d">
+        <Header withoutSearchBar />
         <About />
       </div>
     ),

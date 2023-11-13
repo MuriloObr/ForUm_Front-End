@@ -58,7 +58,7 @@ async function userByID(id: number): Promise<User> {
   return data[1]
 }
 
-async function profile(): Promise<[User, Post[] | []]> {
+async function profile(): Promise<{ user: User; posts: Post[] | [] }> {
   const request = await axios.get(`${API_URL}/profile`, {
     withCredentials: true,
   })
@@ -66,7 +66,7 @@ async function profile(): Promise<[User, Post[] | []]> {
 
   const posts = await allPostsFromUser(data[1].id)
 
-  if (posts === undefined) return [data[1], []]
+  if (posts === undefined) return { user: data[1], posts: [] }
 
-  return [data[1], posts]
+  return { user: data[1], posts }
 }

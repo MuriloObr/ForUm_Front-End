@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { PostComment } from '../components/PostComment'
 import { Loading } from '../components/Loading'
 import { Error } from '../components/Error'
@@ -11,6 +11,7 @@ import { postData } from '../api/postFunctions'
 import { ArrowFatLinesRight, CheckFat } from '@phosphor-icons/react'
 import { ConfigButton } from '../components/ConfigButton'
 import { AnswerContext } from '../context/AnswerContext'
+import { LoadingSubmit } from '../components/LoadingSubmit'
 
 export function PostPage() {
   const { postID } = useParams()
@@ -19,6 +20,10 @@ export function PostPage() {
     queryFn: () =>
       getData.postByID(postID === undefined ? 0 : parseInt(postID)),
     staleTime: 15 * 60 * 1000, // 15 minutes
+  })
+
+  const { mutate, isLoading: mutateLoading } = useMutation({
+    mutationFn: Comentar,
   })
 
   const [owner, setOwner] = useState<boolean>(false)
@@ -36,7 +41,7 @@ export function PostPage() {
     async function verifyOwner() {
       const res = await getData.profile()
 
-      const exist = res[1].find(
+      const exist = res.posts.find(
         (post) => post.id === parseInt(postID === undefined ? 'NaN' : postID),
       )
       if (exist !== undefined) return setOwner(true)
@@ -51,9 +56,19 @@ export function PostPage() {
   const [commentStatus, setCommentStatus] = useState<string>('')
 
   async function Comentar() {
-    const content = inputTextareaRef.current?.value
-    const res = await postData.addNewComment({ post_id: postID, content })
-    return res
+    const comment = async () => {
+      const content = inputTextareaRef.current?.value
+      const res = await postData.addNewComment({ post_id: postID, content })
+      return res
+    }
+    const commented = await comment()
+    if (commented === true) {
+      modalRef.current?.close()
+      queryClient.invalidateQueries({ queryKey: ['post'] })
+      return
+    }
+    if (commented === 401)
+      setCommentStatus('Você precisa estar logado para comentar!')
   }
 
   async function melhorResposta(id: number) {
@@ -151,18 +166,10 @@ export function PostPage() {
           ref={modalRef}
           res={commentStatus}
           submitLabel="Comentar"
-          onSubmit={async () => {
-            const commented = await Comentar()
-            if (commented === true) {
-              modalRef.current?.close()
-              queryClient.invalidateQueries({ queryKey: ['post'] })
-              return
-            }
-            if (commented === 401)
-              setCommentStatus('Voçê precisa estar logado para comentar!')
-          }}
+          onSubmit={() => mutate()}
         >
           <AddModal.Area label="Conteudo" ref={inputTextareaRef} />
+          <LoadingSubmit isLoading={mutateLoading} />
         </AddModal.Root>
       </ul>
     </main>

@@ -27,7 +27,7 @@ function Root({ action, cautionMessage, children }: MyFormProps['root']) {
       >
         {children}
         {cautionMessage ? <CautionMessage ref={cautionRef} /> : ''}
-        <div
+        <button
           className="py-3 px-2 relative 
           after:absolute after:inline-block after:inset-x-0 after:h-0.5 after:w-full after:top-1 after:scale-x-0 after:origin-left after:bg-zinc-900 after:transition-all
           before:absolute before:inline-block before:inset-x-0 before:h-0.5 before:w-full before:bottom-1 before:scale-x-0 before:origin-right before:bg-zinc-900 before:transition-all
@@ -38,7 +38,7 @@ function Root({ action, cautionMessage, children }: MyFormProps['root']) {
             value={cautionMessage ? 'Registrar' : 'Entrar'}
             className="text-2xl cursor-pointer"
           />
-        </div>
+        </button>
       </form>
     </div>
   )

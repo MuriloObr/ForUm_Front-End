@@ -94,3 +94,8 @@ export type UserCompProps = {
     created_at: string
   }
 }
+
+export type MyHoverCardProps = {
+  children: ReactNode
+  trigger: ReactNode
+}

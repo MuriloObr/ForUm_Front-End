@@ -1,5 +1,5 @@
 import { useContext, useRef, useState } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { SearchContext } from '../context/SearchContext.tsx'
 import { getData } from '../api/getFunctions'
 import { Post } from '../components/Post'
@@ -8,13 +8,23 @@ import { Error } from '../components/Error'
 import { AddButton } from '../components/AddButton'
 import { AddModal } from '../components/AddModal'
 import { postData } from '../api/postFunctions'
+import { LoadingSubmit } from '../components/LoadingSubmit.tsx'
 
 export function App() {
-  const { isLoading, isError, data, error } = useQuery({
+  const {
+    isLoading: dataLoading,
+    isError,
+    data,
+    error,
+  } = useQuery({
     queryKey: ['posts'],
     queryFn: getData.allPosts,
     retry: 5,
     staleTime: 30 * 60 * 1000, // 30 minute
+  })
+
+  const { mutate, isLoading: mutateLoading } = useMutation({
+    mutationFn: Postar,
   })
 
   const queryClient = useQueryClient()
@@ -37,13 +47,22 @@ export function App() {
   console.log(data)
 
   async function Postar() {
-    const tittle = inputTittleRef.current?.value
-    const content = inputTextareaRef.current?.value
-    const res = await postData.addNewPost({ tittle, content })
-    return res
+    const post = async () => {
+      const tittle = inputTittleRef.current?.value
+      const content = inputTextareaRef.current?.value
+      const res = await postData.addNewPost({ tittle, content })
+      return res
+    }
+    const posted = await post()
+    if (posted === true) {
+      modalRef.current?.close()
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      return
+    }
+    if (posted === 401) setPostStatus('Você precisa estar logado para postar!')
   }
 
-  if (isLoading) {
+  if (dataLoading) {
     return <Loading />
   }
   if (isError) {
@@ -104,19 +123,11 @@ export function App() {
             ref={modalRef}
             res={postStatus}
             submitLabel="Postar"
-            onSubmit={async () => {
-              const posted = await Postar()
-              if (posted === true) {
-                modalRef.current?.close()
-                queryClient.invalidateQueries({ queryKey: ['posts'] })
-                return
-              }
-              if (posted === 401)
-                setPostStatus('Voçê precisa estar logado para postar!')
-            }}
+            onSubmit={() => mutate()}
           >
             <AddModal.Field label="Titulo" type="text" ref={inputTittleRef} />
-            <AddModal.Area label="Conteudo" ref={inputTextareaRef} />
+            <AddModal.Area label="Conteúdo" ref={inputTextareaRef} />
+            <LoadingSubmit isLoading={mutateLoading} />
           </AddModal.Root>
         </ul>
       </main>

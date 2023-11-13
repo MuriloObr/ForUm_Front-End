@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { postData } from '../api/postFunctions'
 import { Form } from '../components/Form'
 import { useMutation } from '@tanstack/react-query'
-import { CircleNotch } from '@phosphor-icons/react'
+import { LoadingSubmit } from '../components/LoadingSubmit'
 
 export function Register() {
   const usernameRef = useRef<HTMLInputElement>(null)
@@ -59,16 +59,7 @@ export function Register() {
         ref={passwordRef}
       />
       <Form.ResField res={res.message} color={res.color} />
-      {isLoading ? (
-        <div className="absolute inset-0 m-auto h-screen w-screen bg-white/75">
-          <CircleNotch
-            size={80}
-            className="absolute inset-0 m-auto animate-spin"
-          />
-        </div>
-      ) : (
-        ''
-      )}
+      <LoadingSubmit isLoading={isLoading} />
     </Form.Root>
   )
 }

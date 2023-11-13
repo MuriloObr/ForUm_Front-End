@@ -3,7 +3,9 @@ import { Form } from '../components/Form'
 import { postData } from '../api/postFunctions'
 import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
-import { CircleNotch } from '@phosphor-icons/react'
+import { Question } from '@phosphor-icons/react'
+import { MyHoverCard } from '../components/MyHoverCard'
+import { LoadingSubmit } from '../components/LoadingSubmit'
 
 export function Login() {
   const userRef = useRef<HTMLInputElement>(null)
@@ -42,16 +44,11 @@ export function Login() {
         ref={passwordRef}
       />
       <Form.ResField res={res.message} color={res.color} />
-      {isLoading ? (
-        <div className="absolute inset-0 m-auto h-screen w-screen bg-white/75">
-          <CircleNotch
-            size={80}
-            className="absolute inset-0 m-auto animate-spin"
-          />
-        </div>
-      ) : (
-        ''
-      )}
+      <LoadingSubmit isLoading={isLoading} />
+      <MyHoverCard trigger={<Question />}>
+        <span className="font-bold text-xl">Test Login:</span> User: admin,
+        Pass: admin
+      </MyHoverCard>
     </Form.Root>
   )
 }
