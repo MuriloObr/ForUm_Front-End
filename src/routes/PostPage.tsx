@@ -42,7 +42,7 @@ export function PostPage() {
       const res = await getData.profile()
 
       const exist = res.posts.find(
-        (post) => post.id === parseInt(postID === undefined ? 'NaN' : postID),
+        ({ id }) => id === parseInt(postID === undefined ? 'NaN' : postID),
       )
       if (exist !== undefined) return setOwner(true)
       return setOwner(false)

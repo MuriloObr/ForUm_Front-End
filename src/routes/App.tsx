@@ -1,8 +1,9 @@
+/* eslint-disable camelcase */
 import { useContext, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { SearchContext } from '../context/SearchContext.tsx'
 import { getData } from '../api/getFunctions'
-import { Post } from '../components/Post'
+import { Post } from '../components/Post.tsx'
 import { Loading } from '../components/Loading'
 import { Error } from '../components/Error'
 import { AddButton } from '../components/AddButton'
@@ -39,8 +40,8 @@ export function App() {
 
   const filteredPosts =
     search.length > 0
-      ? data?.filter((post) =>
-          post.tittle.toLowerCase().includes(search.toLowerCase()),
+      ? data?.filter(({ tittle }) =>
+          tittle.toLowerCase().includes(search.toLowerCase()),
         )
       : []
 
@@ -70,67 +71,79 @@ export function App() {
   }
 
   return (
-    <div className="flex flex-col h-screen-d">
-      <main className="w-full p-5 bg-slate-800 flex-1">
-        <ul className="h-fit flex flex-col gap-5">
-          {search.length > 0 ? (
-            filteredPosts?.map((post) => {
+    <main className="w-full p-5 bg-slate-800 flex-1">
+      <ul className="h-fit flex flex-col gap-5">
+        {search.length > 0 ? (
+          filteredPosts?.map(
+            ({
+              id,
+              tittle,
+              content,
+              views,
+              likes,
+              user,
+              closed,
+              created_at,
+            }) => {
               return (
-                <Post.Root
-                  username={post.user.username}
-                  postID={post.id}
-                  key={post.id}
-                >
-                  <Post.Header closed={post.closed}>{post.tittle}</Post.Header>
-                  <Post.Content>{post.content}</Post.Content>
+                <Post.Root username={user.username} postID={id} key={id}>
+                  <Post.Header closed={closed}>{tittle}</Post.Header>
+                  <Post.Content>{content}</Post.Content>
                   <Post.Footer
-                    views={post.views.length}
-                    likes={post.likes.length}
-                    createdAt={post.created_at}
-                    nickname={post.user.nickname}
+                    views={views.length}
+                    likes={likes.length}
+                    createdAt={created_at}
+                    nickname={user.nickname}
                   />
                 </Post.Root>
               )
-            })
-          ) : data === undefined ? (
-            <div>No posts to see...</div>
-          ) : (
-            data.map((post) => {
+            },
+          )
+        ) : data === undefined ? (
+          <div>No posts to see...</div>
+        ) : (
+          data.map(
+            ({
+              id,
+              tittle,
+              content,
+              views,
+              likes,
+              user,
+              closed,
+              created_at,
+            }) => {
               return (
-                <Post.Root
-                  username={post.user.username}
-                  postID={post.id}
-                  key={post.id}
-                >
-                  <Post.Header closed={post.closed}>{post.tittle}</Post.Header>
-                  <Post.Content>{post.content}</Post.Content>
+                <Post.Root username={user.username} postID={id} key={id}>
+                  <Post.Header closed={closed}>{tittle}</Post.Header>
+                  <Post.Content>{content}</Post.Content>
                   <Post.Footer
-                    views={post.views.length}
-                    likes={post.likes.length}
-                    createdAt={post.created_at}
-                    nickname={post.user.nickname}
+                    views={views.length}
+                    likes={likes.length}
+                    createdAt={created_at}
+                    nickname={user.nickname}
                   />
                 </Post.Root>
               )
-            })
-          )}
-          <AddButton
-            text="+ Post"
-            className="mr-10"
-            onClick={() => modalRef.current?.showModal()}
-          />
-          <AddModal.Root
-            ref={modalRef}
-            res={postStatus}
-            submitLabel="Postar"
-            onSubmit={() => mutate()}
-          >
-            <AddModal.Field label="Titulo" type="text" ref={inputTittleRef} />
-            <AddModal.Area label="Conteúdo" ref={inputTextareaRef} />
-            <LoadingSubmit isLoading={mutateLoading} />
-          </AddModal.Root>
-        </ul>
-      </main>
-    </div>
+            },
+          )
+        )}
+        <AddButton
+          text="+ Post"
+          className="mr-10"
+          onClick={() => modalRef.current?.showModal()}
+        />
+        <AddModal.Root
+          ref={modalRef}
+          res={postStatus}
+          submitLabel="Postar"
+          onSubmit={() => mutate()}
+        >
+          <AddModal.Field label="Titulo" type="text" ref={inputTittleRef} />
+          <AddModal.Area label="Conteúdo" ref={inputTextareaRef} />
+          <LoadingSubmit isLoading={mutateLoading} />
+        </AddModal.Root>
+      </ul>
+    </main>
   )
 }
