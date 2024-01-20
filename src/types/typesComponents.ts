@@ -19,6 +19,7 @@ export type AddModalProps = {
   }
   area: {
     label: string
+    withMD?: true
   }
 }
 

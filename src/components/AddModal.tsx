@@ -1,6 +1,9 @@
-import { forwardRef } from 'react'
+/* eslint-disable react-refresh/only-export-components */
+import { forwardRef, useRef, useState, useEffect } from 'react'
 import { AddButton } from './AddButton'
 import { AddModalProps } from '../types/typesComponents'
+import { marked } from 'marked'
+import { purify } from '../utils/DomPurifyHelper'
 
 const Root = forwardRef<HTMLDialogElement, AddModalProps['root']>(function Root(
   { children, onSubmit, submitLabel, res },
@@ -37,14 +40,61 @@ const Field = forwardRef<HTMLInputElement, AddModalProps['field']>(
 )
 
 const Area = forwardRef<HTMLTextAreaElement, AddModalProps['area']>(
-  function Area({ label }, ref) {
+  function Area({ label, withMD }, ref) {
+    const [mdView, setMdView] = useState({ raw: 'block', view: 'hidden' })
+    const [MDstr, setMDstr] = useState(
+      'Escreva seu texto para ver a preview aqui, se precisar saber sobre markdown entre [aqui](https://github.com/luong-komorebi/Markdown-Tutorial)',
+    )
+    const previewDivRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+      async function markedParse() {
+        const finalStr = await marked.parse(MDstr ?? '')
+        setMDstr(finalStr)
+      }
+      markedParse()
+    }, [MDstr])
+
     return (
       <label className="flex flex-col text-black text-2xl">
         {label}↴
         <textarea
           ref={ref}
-          className="w-full px-2 bg-transparent border-b-2 border-black text-2xl leading-10 font-normal outline-none"
+          rows={10}
+          onChange={(ev) => {
+            if (!withMD) return
+            setMDstr(ev.target.value)
+          }}
+          className={`w-full px-2 bg-transparent border-b-2 border-black text-2xl leading-10 font-normal outline-none ${mdView.raw}`}
         />
+        {withMD ? (
+          <>
+            <div
+              ref={previewDivRef}
+              className={`markdown ${mdView.view}`}
+              dangerouslySetInnerHTML={{ __html: purify.sanitize(MDstr) }}
+            />
+            <div className="text-lg rounded bg-slate-800/60 text-white w-fit p-2 flex gap-2 font-bold mt-2">
+              <button
+                onClick={(ev) => {
+                  if (mdView.view === 'hidden') {
+                    setMdView({ raw: 'hidden', view: 'block' })
+                    ev.currentTarget.textContent = 'View'
+                    console.log('hidden')
+                  } else {
+                    setMdView({ raw: 'block', view: 'hidden' })
+                    ev.currentTarget.textContent = 'Raw'
+                    console.log('block')
+                  }
+                }}
+              >
+                Raw
+              </button>
+            </div>
+          </>
+        ) : (
+          ''
+        )}
       </label>
     )
   },

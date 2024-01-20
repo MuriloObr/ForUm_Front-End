@@ -140,7 +140,7 @@ export function App() {
           onSubmit={() => mutate()}
         >
           <AddModal.Field label="Titulo" type="text" ref={inputTittleRef} />
-          <AddModal.Area label="Conteúdo" ref={inputTextareaRef} />
+          <AddModal.Area label="Conteúdo" withMD ref={inputTextareaRef} />
           <LoadingSubmit isLoading={mutateLoading} />
         </AddModal.Root>
       </ul>
