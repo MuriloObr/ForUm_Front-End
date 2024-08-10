@@ -8,6 +8,7 @@ export const postData = {
   logout,
   loggedIn,
   addNewPost,
+  deletePost,
   addNewComment,
   likePost,
   viewPost,
@@ -93,12 +94,26 @@ async function addNewPost({
   content: string | undefined
 }): Promise<number | true | undefined> {
   try {
-    const response = await axios.post(
+    await axios.post(
       `${API_URL}/posts/create`,
       { tittle, content },
       { withCredentials: true },
     )
-    console.log(response.data)
+
+    return true
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.log(error)
+      return error.response?.status
+    }
+  }
+}
+
+async function deletePost(post_id: number): Promise<number | true | undefined> {
+  try {
+    await axios.delete(`${API_URL}/posts/delete/${post_id}`, {
+      withCredentials: true,
+    })
 
     return true
   } catch (error) {
@@ -117,12 +132,11 @@ async function addNewComment({
   content: string | undefined
 }): Promise<number | true | undefined> {
   try {
-    const response = await axios.post(
+    await axios.post(
       `${API_URL}/posts/comment`,
       { post_id, content },
       { withCredentials: true },
     )
-    console.log(response.data)
 
     return true
   } catch (error) {
@@ -135,12 +149,11 @@ async function addNewComment({
 
 async function likePost(post_id: number) {
   try {
-    const response = await axios.post(
+    await axios.post(
       `${API_URL}/posts/like`,
       { post_id },
       { withCredentials: true },
     )
-    console.log(response.data)
 
     return true
   } catch (error) {
@@ -153,11 +166,10 @@ async function likePost(post_id: number) {
 
 async function rmlikePost(post_id: number) {
   try {
-    const response = await axios.delete(`${API_URL}/posts/like`, {
+    await axios.delete(`${API_URL}/posts/like`, {
       data: { post_id },
       withCredentials: true,
     })
-    console.log(response.data)
 
     return true
   } catch (error) {
@@ -170,12 +182,11 @@ async function rmlikePost(post_id: number) {
 
 async function viewPost(post_id: string | undefined) {
   try {
-    const response = await axios.post(
+    await axios.post(
       `${API_URL}/posts/view`,
       { post_id },
       { withCredentials: true },
     )
-    console.log(response.data)
 
     return true
   } catch (error) {
@@ -188,12 +199,11 @@ async function viewPost(post_id: string | undefined) {
 
 async function closeOpenPost(post_id: number) {
   try {
-    const response = await axios.put(
+    await axios.put(
       `${API_URL}/posts/closed`,
       { post_id },
       { withCredentials: true },
     )
-    console.log(response.data)
 
     return true
   } catch (error) {
@@ -206,12 +216,11 @@ async function closeOpenPost(post_id: number) {
 
 async function likeComment(comment_id: number) {
   try {
-    const response = await axios.post(
+    await axios.post(
       `${API_URL}/comments/like`,
       { comment_id },
       { withCredentials: true },
     )
-    console.log(response.data)
 
     return true
   } catch (error) {
@@ -224,11 +233,10 @@ async function likeComment(comment_id: number) {
 
 async function rmlikeComment(comment_id: number) {
   try {
-    const response = await axios.delete(`${API_URL}/comments/like`, {
+    await axios.delete(`${API_URL}/comments/like`, {
       data: { comment_id },
       withCredentials: true,
     })
-    console.log(response.data)
 
     return true
   } catch (error) {
@@ -247,12 +255,11 @@ async function bestComment({
   post_id: number
 }) {
   try {
-    const response = await axios.put(
+    await axios.put(
       `${API_URL}/comments/best`,
       { comment_id, post_id },
       { withCredentials: true },
     )
-    console.log(response.data)
 
     return true
   } catch (error) {

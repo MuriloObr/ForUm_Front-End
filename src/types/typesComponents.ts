@@ -26,6 +26,7 @@ export type AddModalProps = {
 export interface ConfigProps {
   id: number
   closed: boolean
+  name: string
 }
 
 export type MyFormProps = {
@@ -75,7 +76,8 @@ export type PostCommentProps = {
     isMain?: boolean
   }
   content: {
-    children: ReactNode
+    children: string | TrustedHTML
+    isAnswer?: boolean
   }
   footer: {
     nickname: string

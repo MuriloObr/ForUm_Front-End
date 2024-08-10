@@ -2,8 +2,8 @@
 import { forwardRef, useRef, useState, useEffect } from 'react'
 import { AddButton } from './AddButton'
 import { AddModalProps } from '../types/typesComponents'
-import { marked } from 'marked'
-import { purify } from '../utils/DomPurifyHelper'
+import { markdownPurifiedStr } from '../utils/MDpurifiedHelper'
+import { highlight } from '../utils/highlighter.ts'
 
 const Root = forwardRef<HTMLDialogElement, AddModalProps['root']>(function Root(
   { children, onSubmit, submitLabel, res },
@@ -48,12 +48,13 @@ const Area = forwardRef<HTMLTextAreaElement, AddModalProps['area']>(
     const previewDivRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-      async function markedParse() {
-        const finalStr = await marked.parse(MDstr ?? '')
-        setMDstr(finalStr)
-      }
-      markedParse()
+      console.log('effect')
     }, [MDstr])
+
+    async function markedParse() {
+      const finalStr = await markdownPurifiedStr(MDstr)
+      setMDstr(finalStr)
+    }
 
     return (
       <label className="flex flex-col text-black text-2xl">
@@ -65,26 +66,28 @@ const Area = forwardRef<HTMLTextAreaElement, AddModalProps['area']>(
             if (!withMD) return
             setMDstr(ev.target.value)
           }}
-          className={`w-full px-2 bg-transparent border-b-2 border-black text-2xl leading-10 font-normal outline-none ${mdView.raw}`}
+          className={`w-full px-2 bg-transparent border-b-2 border-black text-2xl leading-8 font-normal outline-none ${mdView.raw}`}
         />
         {withMD ? (
           <>
-            <div
-              ref={previewDivRef}
-              className={`markdown ${mdView.view}`}
-              dangerouslySetInnerHTML={{ __html: purify.sanitize(MDstr) }}
-            />
+            <pre className="font-[inherit]">
+              <div
+                ref={previewDivRef}
+                className={`markdown ${mdView.view}`}
+                dangerouslySetInnerHTML={{ __html: MDstr }}
+              />
+            </pre>
             <div className="text-lg rounded bg-slate-800/60 text-white w-fit p-2 flex gap-2 font-bold mt-2">
               <button
                 onClick={(ev) => {
+                  markedParse()
+                  highlight()
                   if (mdView.view === 'hidden') {
                     setMdView({ raw: 'hidden', view: 'block' })
                     ev.currentTarget.textContent = 'View'
-                    console.log('hidden')
                   } else {
                     setMdView({ raw: 'block', view: 'hidden' })
                     ev.currentTarget.textContent = 'Raw'
-                    console.log('block')
                   }
                 }}
               >

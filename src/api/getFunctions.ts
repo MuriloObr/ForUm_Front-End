@@ -10,11 +10,11 @@ export const getData = {
   profile,
 }
 
-export const DEVELOPMENT_API_URL = 'http://127.0.0.1:8080/api'
+const devMode = false
 
-export const OLD_API_URL = 'https://backend-forum.onrender.com/api'
-
-export const API_URL = 'https://forumbackend-4crd.onrender.com/api'
+export const API_URL = devMode
+  ? 'http://127.0.0.1:5001/api'
+  : 'https://forumbackend-4crd.onrender.com/api'
 
 async function allPosts(): Promise<Post[] | []> {
   const request = await axios.get(`${API_URL}/posts`)

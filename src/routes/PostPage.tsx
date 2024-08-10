@@ -8,10 +8,11 @@ import { AddModal } from '../components/AddModal'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { getData } from '../api/getFunctions'
 import { postData } from '../api/postFunctions'
-import { ArrowFatLinesRight, CheckFat } from '@phosphor-icons/react'
+import { ArrowFatLinesRight } from '@phosphor-icons/react'
 import { ConfigButton } from '../components/ConfigButton'
 import { AnswerContext } from '../context/AnswerContext'
 import { LoadingSubmit } from '../components/LoadingSubmit'
+import { markdownPurifiedStr } from '../utils/MDpurifiedHelper'
 
 export function PostPage() {
   const { postID } = useParams()
@@ -31,11 +32,14 @@ export function PostPage() {
 
   const queryClient = useQueryClient()
 
+  const [MainMDCont, setMainMDCont] = useState<string>('')
+
+  const [CommentMDCont, setCommentMDCont] = useState<string[]>([''])
+
   useEffect(() => {
     async function verifyView() {
       const res = await postData.viewPost(postID)
       if (res === true) queryClient.invalidateQueries({ queryKey: ['posts'] })
-      console.log(res)
     }
     verifyView()
     async function verifyOwner() {
@@ -48,7 +52,26 @@ export function PostPage() {
       return setOwner(false)
     }
     verifyOwner()
-  }, [postID, queryClient])
+
+    async function parseContMD() {
+      const MDstr = await markdownPurifiedStr(data?.post.content ?? '')
+      setMainMDCont(MDstr)
+      const PromiseListMDstr = data?.comments.map(({ content }) =>
+        markdownPurifiedStr(content),
+      ) ?? ['']
+      const ListMDstr = await Promise.allSettled(PromiseListMDstr)
+      setCommentMDCont(
+        ListMDstr.map((promise) => {
+          if (promise.status === 'fulfilled') {
+            return promise.value
+          } else {
+            return ''
+          }
+        }),
+      )
+    }
+    parseContMD()
+  }, [postID, queryClient, data?.post.content, data?.comments])
 
   const modalRef = useRef<HTMLDialogElement>(null)
   const inputTextareaRef = useRef<HTMLTextAreaElement>(null)
@@ -97,7 +120,11 @@ export function PostPage() {
         ) : (
           <>
             {owner ? (
-              <ConfigButton id={data.post.id} closed={data.post.closed} />
+              <ConfigButton
+                id={data.post.id}
+                closed={data.post.closed}
+                name={data.post.tittle}
+              />
             ) : (
               ''
             )}
@@ -109,52 +136,49 @@ export function PostPage() {
                 isClosed={data.post.closed}
                 isMain={true}
               />
-              <PostComment.Content>{data.post.content}</PostComment.Content>
+              <PostComment.Content>{MainMDCont}</PostComment.Content>
               <PostComment.Footer
                 nickname={data.post.user.nickname}
                 createdAt={data.post.created_at}
               />
             </PostComment.Root>
-            {data.comments.map((comment) => (
-              <>
-                <PostComment.Root isMain={false} key={comment.id}>
-                  {owner && answer ? (
-                    <div className="flex absolute -left-10">
-                      <input
-                        type="button"
-                        className="appearance-none h-8 w-8 rounded-full bg-emerald-500 hover:brightness-90"
-                        onClick={() => melhorResposta(comment.id)}
-                      />
-                      <ArrowFatLinesRight
-                        size={24}
-                        className="absolute inset-0 m-auto pointer-events-none text-white"
-                      />
-                    </div>
-                  ) : (
-                    ''
-                  )}
-                  <PostComment.Header
-                    id={comment.id}
-                    tittle="comentario"
-                    likes={comment.likes.length}
-                    isClosed={false}
-                    isMain={false}
-                  />
-                  <PostComment.Content>
-                    {comment.answer ? (
-                      <CheckFat className="text-emerald-500" size={32} />
+            {data.comments.map((comment, i) => {
+              return (
+                <>
+                  <PostComment.Root isMain={false} key={comment.id}>
+                    {owner && answer ? (
+                      <div className="flex absolute -left-10">
+                        <input
+                          type="button"
+                          className="appearance-none h-8 w-8 rounded-full bg-emerald-500 hover:brightness-90"
+                          onClick={() => melhorResposta(comment.id)}
+                        />
+                        <ArrowFatLinesRight
+                          size={24}
+                          className="absolute inset-0 m-auto pointer-events-none text-white"
+                        />
+                      </div>
                     ) : (
                       ''
                     )}
-                    {comment.content}
-                  </PostComment.Content>
-                  <PostComment.Footer
-                    nickname={comment.user.nickname}
-                    createdAt={comment.created_at}
-                  />
-                </PostComment.Root>
-              </>
-            ))}
+                    <PostComment.Header
+                      id={comment.id}
+                      tittle="comentario"
+                      likes={comment.likes.length}
+                      isClosed={false}
+                      isMain={false}
+                    />
+                    <PostComment.Content isAnswer={comment.answer}>
+                      {CommentMDCont[i]}
+                    </PostComment.Content>
+                    <PostComment.Footer
+                      nickname={comment.user.nickname}
+                      createdAt={comment.created_at}
+                    />
+                  </PostComment.Root>
+                </>
+              )
+            })}
           </>
         )}
         <AddButton
@@ -168,7 +192,7 @@ export function PostPage() {
           submitLabel="Comentar"
           onSubmit={() => mutate()}
         >
-          <AddModal.Area label="Conteudo" ref={inputTextareaRef} />
+          <AddModal.Area withMD label="Conteudo" ref={inputTextareaRef} />
           <LoadingSubmit isLoading={mutateLoading} />
         </AddModal.Root>
       </ul>

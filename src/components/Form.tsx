@@ -1,7 +1,7 @@
 import { forwardRef, useRef } from 'react'
 import { MyFormProps } from '../types/typesComponents'
 
-function Root({ action, cautionMessage, children }: MyFormProps['root']) {
+const Root = ({ action, cautionMessage, children }: MyFormProps['root']) => {
   const cautionRef = useRef<HTMLInputElement>(null)
 
   return (
@@ -64,7 +64,7 @@ const Field = forwardRef<HTMLInputElement, MyFormProps['field']>(function Field(
   )
 })
 
-function ResField({ res, color }: { res: string; color: string }) {
+const ResField = ({ res, color }: { res: string; color: string }) => {
   return <span className={`${color} text-xl h-8`}>{res}</span>
 }
 

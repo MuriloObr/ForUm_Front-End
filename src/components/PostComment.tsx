@@ -1,9 +1,11 @@
+/* eslint-disable react-refresh/only-export-components */
 import {
   X,
   Check,
   CaretUp,
   CaretDown,
   FunnelSimple,
+  CheckFat,
 } from '@phosphor-icons/react'
 import { postData } from '../api/postFunctions'
 import { useQueryClient } from '@tanstack/react-query'
@@ -104,8 +106,16 @@ function Header({
   )
 }
 
-function Content({ children }: PostCommentProps['content']) {
-  return <p className="mt-5 mb-5 flex items-center gap-2">{children}</p>
+function Content({ children, isAnswer }: PostCommentProps['content']) {
+  return (
+    <p className="mt-5 mb-5 flex items-center gap-2">
+      <pre
+        className="font-[inherit] markdown"
+        dangerouslySetInnerHTML={{ __html: children }}
+      ></pre>
+      {isAnswer ? <CheckFat className="text-emerald-500" size={32} /> : ''}
+    </p>
+  )
 }
 
 function Footer({ nickname, createdAt }: PostCommentProps['footer']) {

@@ -1,19 +1,41 @@
 import * as Popover from '@radix-ui/react-popover'
 import { GearSix, X } from '@phosphor-icons/react'
 import { postData } from '../api/postFunctions'
-import { useQueryClient } from '@tanstack/react-query'
-import { useContext } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useContext, useRef, useState } from 'react'
 import { AnswerContext } from '../context/AnswerContext'
 import { ConfigProps } from '../types/typesComponents'
+import { AddModal } from './AddModal'
+import { LoadingSubmit } from './LoadingSubmit'
+import { useNavigate } from 'react-router-dom'
 
-export function ConfigButton({ id, closed }: ConfigProps) {
+export function ConfigButton({ id, closed, name }: ConfigProps) {
   const queryClient = useQueryClient()
   const { answer, setAnswer } = useContext(AnswerContext)
+  const navigate = useNavigate()
+
+  const modalRef = useRef<HTMLDialogElement>(null)
+  const modalFieldRef = useRef<HTMLInputElement>(null)
+  const [statusMSG, setStatusMSG] = useState('')
+
+  const { mutate, isLoading: mutateLoading } = useMutation({
+    mutationFn: DeletePost,
+  })
 
   async function CloseOpenPost() {
     const res = await postData.closeOpenPost(id)
     if (res === true) {
       queryClient.invalidateQueries({ queryKey: ['post'] })
+    }
+  }
+
+  async function DeletePost() {
+    const res = await postData.deletePost(id)
+    if (res === true) {
+      queryClient.invalidateQueries({ queryKey: ['post'] })
+      navigate('/profile')
+    } else {
+      setStatusMSG(`Algo deu errado, ou voce não está logado!`)
     }
   }
 
@@ -45,9 +67,31 @@ export function ConfigButton({ id, closed }: ConfigProps) {
           >
             Choose Best Answer
           </button>
-          <button className="bg-red-600 hover:brightness-90 rounded-md p-1">
+          <button
+            className="bg-red-600 hover:brightness-90 rounded-md p-1"
+            onClick={() => modalRef.current?.showModal()}
+          >
             Delete Post
           </button>
+          <AddModal.Root
+            ref={modalRef}
+            res={statusMSG}
+            onSubmit={() => {
+              if (modalFieldRef.current?.value !== name) {
+                setStatusMSG('Campo preenchido incorretamente')
+                return
+              }
+              mutate()
+            }}
+            submitLabel="Deletar"
+          >
+            <AddModal.Field
+              ref={modalFieldRef}
+              type="text"
+              label={`Digite "${name}" para confirmar a deleção`}
+            />
+            <LoadingSubmit isLoading={mutateLoading} />
+          </AddModal.Root>
           <Popover.Close className="absolute right-2 top-2 p-1 rounded-full hover:bg-black/30">
             <X className="text-black" />
           </Popover.Close>

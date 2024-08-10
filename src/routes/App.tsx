@@ -45,8 +45,6 @@ export function App() {
         )
       : []
 
-  console.log(data)
-
   async function Postar() {
     const post = async () => {
       const tittle = inputTittleRef.current?.value
@@ -116,7 +114,7 @@ export function App() {
               return (
                 <Post.Root username={user.username} postID={id} key={id}>
                   <Post.Header closed={closed}>{tittle}</Post.Header>
-                  <Post.Content>{content}</Post.Content>
+                  <Post.Content>{content.replaceAll('#', '')}</Post.Content>
                   <Post.Footer
                     views={views.length}
                     likes={likes.length}
