@@ -24,7 +24,7 @@ export function Header({ withoutSearchBar }: { withoutSearchBar?: true }) {
       {withoutSearchBar ? (
         ''
       ) : (
-        <div className="flex items-center w-2/3 ml-auto mr-5 py-1 px-2 bg-zinc-300/70 rounded-lg border border-[#fafafa] focus-within:border-zinc-900/50">
+        <div className="sm:flex hidden items-center 2xl:w-[64%] lg:w-[55%] md:w-[42%] sm:w-[30%] ml-auto mr-5 py-1 px-2 bg-zinc-300/70 rounded-lg border border-[#fafafa] focus-within:border-zinc-900/50">
           <img src={searchIcon} alt="Buscar" className="h-6 w-6" />
           <input
             type="text"
@@ -35,10 +35,10 @@ export function Header({ withoutSearchBar }: { withoutSearchBar?: true }) {
         </div>
       )}
 
-      <nav className="text-xl text-zinc-900 flex gap-x-16">
+      <nav className="text-xl text-zinc-900 flex 2xl:gap-x-12 sm:gap-x-2 gap-x-0">
         <a
           href={`/`}
-          className="py-1 px-2 relative 
+          className="py-1 sm:px-2 px-0.5 relative 
           after:absolute after:inline-block after:inset-x-0 after:h-0.5 after:w-full after:top-1 after:scale-x-0 after:origin-left after:bg-zinc-900 after:transition-all
           before:absolute before:inline-block before:inset-x-0 before:h-0.5 before:w-full before:bottom-1 before:scale-x-0 before:origin-right before:bg-zinc-900 before:transition-all
           hover:after:scale-x-100 hover:before:scale-x-100"
@@ -47,7 +47,7 @@ export function Header({ withoutSearchBar }: { withoutSearchBar?: true }) {
         </a>
         <a
           href={`/about`}
-          className="py-1 px-2 relative 
+          className="py-1 sm:px-2 px-0.5 relative 
           after:absolute after:inline-block after:inset-x-0 after:h-0.5 after:w-full after:top-1 after:scale-x-0 after:origin-left after:bg-zinc-900 after:transition-all
           before:absolute before:inline-block before:inset-x-0 before:h-0.5 before:w-full before:bottom-1 before:scale-x-0 before:origin-right before:bg-zinc-900 before:transition-all
           hover:after:scale-x-100 hover:before:scale-x-100"
