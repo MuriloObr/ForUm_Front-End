@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useContext, useRef, useState } from 'react'
 import { AnswerContext } from '../context/AnswerContext'
 import { ConfigProps } from '../types/typesComponents'
-import { AddModal } from './AddModal'
+import { Modal } from './Modal'
 import { LoadingSubmit } from './LoadingSubmit'
 import { useNavigate } from 'react-router-dom'
 
@@ -73,7 +73,7 @@ export function ConfigButton({ id, closed, name }: ConfigProps) {
           >
             Delete Post
           </button>
-          <AddModal.Root
+          <Modal.Root
             ref={modalRef}
             res={statusMSG}
             onSubmit={() => {
@@ -85,13 +85,13 @@ export function ConfigButton({ id, closed, name }: ConfigProps) {
             }}
             submitLabel="Deletar"
           >
-            <AddModal.Field
+            <Modal.Field
               ref={modalFieldRef}
               type="text"
               label={`Digite "${name}" para confirmar a deleção`}
             />
             <LoadingSubmit isLoading={mutateLoading} />
-          </AddModal.Root>
+          </Modal.Root>
           <Popover.Close className="absolute right-2 top-2 p-1 rounded-full hover:bg-black/30">
             <X className="text-black" />
           </Popover.Close>

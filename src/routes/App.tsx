@@ -7,7 +7,7 @@ import { Post } from '../components/Post.tsx'
 import { Loading } from '../components/Loading'
 import { Error } from '../components/Error'
 import { AddButton } from '../components/AddButton'
-import { AddModal } from '../components/AddModal'
+import { Modal } from '../components/Modal'
 import { postData } from '../api/postFunctions'
 import { LoadingSubmit } from '../components/LoadingSubmit.tsx'
 
@@ -131,16 +131,16 @@ export function App() {
           className="mr-10"
           onClick={() => modalRef.current?.showModal()}
         />
-        <AddModal.Root
+        <Modal.Root
           ref={modalRef}
           res={postStatus}
           submitLabel="Postar"
           onSubmit={() => mutate()}
         >
-          <AddModal.Field label="Titulo" type="text" ref={inputTittleRef} />
-          <AddModal.Area label="Conteúdo" withMD ref={inputTextareaRef} />
+          <Modal.Field label="Titulo" type="text" ref={inputTittleRef} />
+          <Modal.Area label="Conteúdo" withMD ref={inputTextareaRef} />
           <LoadingSubmit isLoading={mutateLoading} />
-        </AddModal.Root>
+        </Modal.Root>
       </ul>
     </main>
   )

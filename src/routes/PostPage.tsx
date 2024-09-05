@@ -4,7 +4,7 @@ import { PostComment } from '../components/PostComment'
 import { Loading } from '../components/Loading'
 import { Error } from '../components/Error'
 import { AddButton } from '../components/AddButton'
-import { AddModal } from '../components/AddModal'
+import { Modal } from '../components/Modal'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { getData } from '../api/getFunctions'
 import { postData } from '../api/postFunctions'
@@ -186,15 +186,15 @@ export function PostPage() {
           className="right-0 mr-10"
           onClick={() => modalRef.current?.showModal()}
         />
-        <AddModal.Root
+        <Modal.Root
           ref={modalRef}
           res={commentStatus}
           submitLabel="Comentar"
           onSubmit={() => mutate()}
         >
-          <AddModal.Area withMD label="Conteudo" ref={inputTextareaRef} />
+          <Modal.Area withMD label="Conteudo" ref={inputTextareaRef} />
           <LoadingSubmit isLoading={mutateLoading} />
-        </AddModal.Root>
+        </Modal.Root>
       </ul>
     </main>
   )
