@@ -1,6 +1,6 @@
 import { forwardRef } from 'react'
-import { AddModalProps } from '../../types/typesComponents'
-import { AddButton } from '../AddButton'
+import { AddModalProps } from '@mytypes/typesComponents'
+import { AddButton } from '@components/ui/AddButton'
 
 export const ModalRoot = forwardRef<HTMLDialogElement, AddModalProps['root']>(
   function Root({ children, onSubmit, submitLabel, res }, ref) {

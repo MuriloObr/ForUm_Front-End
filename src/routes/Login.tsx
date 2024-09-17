@@ -4,7 +4,7 @@ import { postData } from '../api/postFunctions'
 import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { Question } from '@phosphor-icons/react'
-import { MyHoverCard } from '../components/MyHoverCard'
+import { MyHoverCard } from '../components/ui/MyHoverCard'
 import { LoadingSubmit } from '../components/LoadingSubmit'
 
 export function Login() {

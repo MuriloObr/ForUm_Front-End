@@ -1,5 +1,5 @@
 import { forwardRef } from 'react'
-import { AddModalProps } from '../../types/typesComponents'
+import { AddModalProps } from '@mytypes/typesComponents'
 
 export const ModalField = forwardRef<HTMLInputElement, AddModalProps['field']>(
   function Field({ type, label }, ref) {

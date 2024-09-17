@@ -1,12 +1,12 @@
 import * as Popover from '@radix-ui/react-popover'
 import { GearSix, X } from '@phosphor-icons/react'
-import { postData } from '../api/postFunctions'
+import { postData } from '../../api/postFunctions'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useContext, useRef, useState } from 'react'
-import { AnswerContext } from '../context/AnswerContext'
-import { ConfigProps } from '../types/typesComponents'
-import { Modal } from './Modal'
-import { LoadingSubmit } from './LoadingSubmit'
+import { AnswerContext } from '../../context/AnswerContext'
+import { ConfigProps } from '@mytypes/typesComponents'
+import { Modal } from '@components/Modal'
+import { LoadingSubmit } from '@components/LoadingSubmit'
 import { useNavigate } from 'react-router-dom'
 
 export function ConfigButton({ id, closed, name }: ConfigProps) {

@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useRef, useState } from 'react'
-import { AddModalProps } from '../../types/typesComponents'
+import { AddModalProps } from '@mytypes/typesComponents'
 import { markdownPurifiedStr } from '../../utils/MDpurifiedHelper'
 import { highlight } from '../../utils/highlighter'
 

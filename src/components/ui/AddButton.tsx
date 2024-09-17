@@ -1,4 +1,4 @@
-import { AddButtonProps } from '../types/typesComponents'
+import { AddButtonProps } from '@mytypes/typesComponents'
 
 export function AddButton({ text, onClick, className = '' }: AddButtonProps) {
   return (
