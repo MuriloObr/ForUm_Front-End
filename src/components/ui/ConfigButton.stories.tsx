@@ -14,9 +14,7 @@ const meta: Meta<typeof ConfigButton> = {
     (Story) => (
       <MemoryRouter initialEntries={['/']}>
         <QueryClientProvider client={client}>
-          <IconContext.Provider
-            value={{ size: 16, color: 'black'}}
-          >
+          <IconContext.Provider value={{ size: 16, color: 'black' }}>
             <AnswerProvider>{Story()}</AnswerProvider>
           </IconContext.Provider>
         </QueryClientProvider>

@@ -14,15 +14,18 @@ ForUm client — a React SPA forum frontend. Single package (not a monorepo). Ba
 - Radix UI (hover-card, popover), Phosphor Icons
 - Markdown rendering: `marked` + `dompurify` + `highlight.js`
 - Storybook 8 (React-Vite)
+- Orval for API code generation from OpenAPI spec
 
 ## Commands
 
 ```bash
-npm run dev          # Vite dev server on 0.0.0.0
-npm run build        # tsc && vite build
-npm run lint         # eslint . --ext ts,tsx (zero warnings allowed)
-npm run storybook    # Storybook on port 6006
-npm run build-storybook
+pnpm dev              # Vite dev server on 0.0.0.0
+pnpm build            # tsc && vite build
+pnpm lint             # eslint . --ext ts,tsx (zero warnings allowed)
+pnpm generate         # Generate API types and hooks from openapi.json
+pnpm generate:watch   # Watch mode for generation
+pnpm storybook        # Storybook on port 6006
+pnpm build-storybook
 ```
 
 No test runner is configured. There are no test scripts or test dependencies.
@@ -43,23 +46,42 @@ ESLint extends `@rocketseat/eslint-config/react` — this enforces camelCase nam
 - **Entry**: `src/main.tsx` — sets up React Query, SearchContext, AnswerContext, and router
 - **Routes**: `src/routes/` — App, PostPage, Login, Register, Profile, About, ErrorPage
 - **Components**: `src/components/` — Header, Post, PostComment, UserComponent, Modal/, Form/, ui/
-- **API layer**: `src/api/getFunctions.ts` and `src/api/postFunctions.ts` — all backend calls via axios
+- **API layer (legacy)**: `src/api/getFunctions.ts` and `src/api/postFunctions.ts` — hand-written backend calls via axios
+- **API layer (generated)**: `src/api/generated/` — Orval-generated types, hooks, and functions (gitignored, run `pnpm generate`)
+- **API mutator**: `src/api/mutator/custom-instance.ts` — shared Axios instance with `VITE_API_URL` env var and `withCredentials`
 - **Types**: `src/types/typesAPI.ts` and `src/types/typesComponents.ts`
 - **Contexts**: `src/context/SearchContext.tsx` and `src/context/AnswerContext.tsx`
 - **Utils**: `src/utils/` — highlighter.ts, MDpurifiedHelper.ts
 
 ## API / backend
 
-Backend URL is toggled via a `devMode` boolean in `src/api/getFunctions.ts:13`:
+Backend URL is controlled via `VITE_API_URL` env var, set in environment-specific files:
 
-- `devMode = true` → `http://127.0.0.1:5001/api`
-- `devMode = false` → `https://forumbackend-4crd.onrender.com/api`
+- `.env.development` → `http://localhost:8000/api`
+- `.env.production` → `/api` (relative, since FastAPI serves both static files and API)
+
+The custom Axios instance (`src/api/mutator/custom-instance.ts`) reads `import.meta.env.VITE_API_URL`.
+
+In development, Vite proxies `/api` requests to `http://localhost:8000` (configured in `vite.config.ts`).
 
 Auth uses cookies (`withCredentials: true` on relevant requests).
 
+## Orval code generation
+
+Config in `orval.config.ts`. Generates react-query hooks + axios functions from `openapi.json`.
+
+Output structure (`src/api/generated/`, gitignored):
+
+- `endpoints.ts` — API functions and react-query hooks
+- `model/` — TypeScript types from OpenAPI schemas
+
+The backend's OpenAPI spec (`openapi.json`) is the source of truth for all API types. Run `pnpm generate` after updating the spec.
+
+Generated code should never be edited manually — it is overwritten by `pnpm generate`.
+
 ## Deployment
 
-Vercel SPA with rewrite rule in `vercel.json`: all routes → `/index.html`.
+Production build is served by FastAPI as static files. Vite builds to `dist/`, FastAPI serves `dist/` at `/` and API at `/api/*`.
 
 ## Conventions
 

@@ -1,15 +1,11 @@
 /* eslint-disable import/no-absolute-path */
-import { useQuery } from '@tanstack/react-query'
-import { postData } from '../api/postFunctions'
 import searchIcon from '/searchSvg.svg'
 import { useContext } from 'react'
 import { SearchContext } from '../context/SearchContext'
+import { useLoggedApiLoggedGet } from '../api/generated/endpoints'
 
 export function Header({ withoutSearchBar }: { withoutSearchBar?: true }) {
-  const { data } = useQuery({
-    queryKey: ['loggedIn'],
-    queryFn: postData.loggedIn,
-  })
+  const { data } = useLoggedApiLoggedGet()
 
   const { search, setSearch } = useContext(SearchContext)
 

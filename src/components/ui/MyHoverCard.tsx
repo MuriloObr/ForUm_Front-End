@@ -1,5 +1,5 @@
 import * as HoverCard from '@radix-ui/react-hover-card'
-import { MyHoverCardProps } from '../types/typesComponents'
+import { MyHoverCardProps } from '@mytypes/typesComponents'
 
 export function MyHoverCard({ children, trigger }: MyHoverCardProps) {
   return (

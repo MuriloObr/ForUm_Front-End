@@ -1,8 +1,7 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { postData } from '../api/postFunctions'
+import { useCreateNewUserApiRegisterPost } from '../api/generated/endpoints'
 import { Form } from '../components/Form'
-import { useMutation } from '@tanstack/react-query'
 import { LoadingSubmit } from '../components/LoadingSubmit'
 
 export function Register() {
@@ -15,30 +14,35 @@ export function Register() {
     message: '',
     color: 'white',
   })
-  const { mutate, isLoading } = useMutation({
-    mutationFn: register,
+
+  const { mutate, isLoading } = useCreateNewUserApiRegisterPost({
+    mutation: {
+      onSuccess: () => navigate('/login'),
+      onError: (error) => {
+        if (error.response?.status === 409) {
+          setRes({
+            message: 'Algo deu errado',
+            color: 'text-red-500',
+          })
+        }
+      },
+    },
   })
 
-  async function register() {
-    const res = await postData.register({
-      username: usernameRef.current?.value,
-      nickname: nicknameRef.current?.value,
-      email: emailRef.current?.value,
-      password: passwordRef.current?.value,
-    })
-    if (res.status === 201) {
-      console.log(res.data)
-      navigate(`/login`)
-    } else if (res.status === 409) {
-      setRes({
-        message: 'Algo deu errado',
-        color: 'text-red-500',
-      })
-    }
-  }
-
   return (
-    <Form.Root cautionMessage action={() => mutate()}>
+    <Form.Root
+      cautionMessage
+      action={() =>
+        mutate({
+          data: {
+            username: usernameRef.current?.value ?? '',
+            nickname: nicknameRef.current?.value ?? '',
+            email: emailRef.current?.value ?? '',
+            password: passwordRef.current?.value ?? '',
+          },
+        })
+      }
+    >
       <Form.Field
         label="Username"
         name="username"

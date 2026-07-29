@@ -1,7 +1,10 @@
 import * as Popover from '@radix-ui/react-popover'
 import { GearSix, X } from '@phosphor-icons/react'
-import { postData } from '../../api/postFunctions'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  useDeletePostApiPostsDeletePostIDDelete,
+  closeOpenPostApiPostsClosedPut,
+} from '../../api/generated/endpoints'
+import { useQueryClient } from '@tanstack/react-query'
 import { useContext, useRef, useState } from 'react'
 import { AnswerContext } from '../../context/AnswerContext'
 import { ConfigProps } from '@mytypes/typesComponents'
@@ -18,24 +21,25 @@ export function ConfigButton({ id, closed, name }: ConfigProps) {
   const modalFieldRef = useRef<HTMLInputElement>(null)
   const [statusMSG, setStatusMSG] = useState('')
 
-  const { mutate, isLoading: mutateLoading } = useMutation({
-    mutationFn: DeletePost,
-  })
+  const { mutate, isLoading: mutateLoading } =
+    useDeletePostApiPostsDeletePostIDDelete({
+      mutation: {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['post'] })
+          navigate('/profile')
+        },
+        onError: () => {
+          setStatusMSG(`Algo deu errado, ou voce não está logado!`)
+        },
+      },
+    })
 
-  async function CloseOpenPost() {
-    const res = await postData.closeOpenPost(id)
-    if (res === true) {
+  async function handleCloseOpenPost() {
+    try {
+      await closeOpenPostApiPostsClosedPut({ post_id: id })
       queryClient.invalidateQueries({ queryKey: ['post'] })
-    }
-  }
-
-  async function DeletePost() {
-    const res = await postData.deletePost(id)
-    if (res === true) {
-      queryClient.invalidateQueries({ queryKey: ['post'] })
-      navigate('/profile')
-    } else {
-      setStatusMSG(`Algo deu errado, ou voce não está logado!`)
+    } catch {
+      // error handled silently
     }
   }
 
@@ -53,7 +57,7 @@ export function ConfigButton({ id, closed, name }: ConfigProps) {
                 'p-1 hover:brightness-90 rounded-md' +
                 (closed ? ' bg-emerald-500' : ' bg-purple-600')
               }
-              onClick={() => CloseOpenPost()}
+              onClick={() => handleCloseOpenPost()}
             >
               Mark as {closed ? 'Opened' : 'Closed'}
             </button>
@@ -81,7 +85,7 @@ export function ConfigButton({ id, closed, name }: ConfigProps) {
                 setStatusMSG('Campo preenchido incorretamente')
                 return
               }
-              mutate()
+              mutate({ postID: id })
             }}
             submitLabel="Deletar"
           >
