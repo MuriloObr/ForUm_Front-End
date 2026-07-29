@@ -1,11 +1,11 @@
-import { useParams } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
-import { PostComment } from "../components/PostComment";
-import { Loading } from "../components/Loading";
-import { Error } from "../components/Error";
-import { AddButton } from "../components/ui/AddButton";
-import { Modal } from "../components/Modal";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useParams } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
+import { PostComment } from '../components/PostComment'
+import { Loading } from '../components/Loading'
+import { Error } from '../components/Error'
+import { AddButton } from '../components/ui/AddButton'
+import { Modal } from '../components/Modal'
+import { useContext, useEffect, useRef, useState } from 'react'
 import {
   useGetPostByIDApiPostsPostIDGet,
   useGetAllCommentsFromPostApiCommentsPostIDGet,
@@ -13,16 +13,16 @@ import {
   useCreateNewCommentApiPostsCommentPost,
   useViewPostApiPostsViewPost,
   bestCommentApiCommentsBestPut,
-} from "../api/generated/endpoints";
-import { ArrowFatLinesRight } from "@phosphor-icons/react";
-import { ConfigButton } from "../components/ui/ConfigButton";
-import { AnswerContext } from "../context/AnswerContext";
-import { LoadingSubmit } from "../components/LoadingSubmit";
-import { markdownPurifiedStr } from "../utils/MDpurifiedHelper";
+} from '../api/generated/endpoints'
+import { ArrowFatLinesRight } from '@phosphor-icons/react'
+import { ConfigButton } from '../components/ui/ConfigButton'
+import { AnswerContext } from '../context/AnswerContext'
+import { LoadingSubmit } from '../components/LoadingSubmit'
+import { markdownPurifiedStr } from '../utils/MDpurifiedHelper'
 
 export function PostPage() {
-  const { postID } = useParams();
-  const parsedPostID = postID === undefined ? 0 : parseInt(postID);
+  const { postID } = useParams()
+  const parsedPostID = postID === undefined ? 0 : parseInt(postID)
 
   const {
     isLoading,
@@ -33,7 +33,7 @@ export function PostPage() {
     query: {
       staleTime: 15 * 60 * 1000,
     },
-  });
+  })
 
   const { data: comments } = useGetAllCommentsFromPostApiCommentsPostIDGet(
     parsedPostID,
@@ -43,100 +43,100 @@ export function PostPage() {
         retry: false,
       },
     },
-  );
+  )
 
-  const { data: profile } = useProfileApiProfileGet();
+  const { data: profile } = useProfileApiProfileGet()
 
-  const [owner, setOwner] = useState<boolean>(false);
-  const { answer, setAnswer } = useContext(AnswerContext);
+  const [owner, setOwner] = useState<boolean>(false)
+  const { answer, setAnswer } = useContext(AnswerContext)
 
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
-  const [MainMDCont, setMainMDCont] = useState<string>("");
-  const [CommentMDCont, setCommentMDCont] = useState<string[]>([]);
+  const [MainMDCont, setMainMDCont] = useState<string>('')
+  const [CommentMDCont, setCommentMDCont] = useState<string[]>([])
 
   const { mutate: viewPost } = useViewPostApiPostsViewPost({
     mutation: {
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: ["posts"] }),
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: ['posts'] }),
     },
-  });
+  })
 
   useEffect(() => {
-    if (parsedPostID === 0 || !post) return;
-    viewPost({ data: { post_id: parsedPostID } });
-  }, [parsedPostID, post, viewPost]);
+    if (parsedPostID === 0 || !post) return
+    viewPost({ data: { post_id: parsedPostID } })
+  }, [parsedPostID, post, viewPost])
 
   useEffect(() => {
-    if (profile === undefined || post === undefined) return;
-    setOwner(profile.id === post.user_id);
-  }, [profile, post]);
+    if (profile === undefined || post === undefined) return
+    setOwner(profile.id === post.user_id)
+  }, [profile, post])
 
   useEffect(() => {
     async function parseContMD() {
-      const MDstr = await markdownPurifiedStr(post?.content ?? "");
-      setMainMDCont(MDstr);
+      const MDstr = await markdownPurifiedStr(post?.content ?? '')
+      setMainMDCont(MDstr)
       const PromiseListMDstr = (comments ?? []).map(({ content }) =>
         markdownPurifiedStr(content),
-      );
-      const ListMDstr = await Promise.allSettled(PromiseListMDstr);
+      )
+      const ListMDstr = await Promise.allSettled(PromiseListMDstr)
       setCommentMDCont(
         ListMDstr.map((promise) => {
-          if (promise.status === "fulfilled") {
-            return promise.value;
+          if (promise.status === 'fulfilled') {
+            return promise.value
           } else {
-            return "";
+            return ''
           }
         }),
-      );
+      )
     }
-    parseContMD();
-  }, [post?.content, comments]);
+    parseContMD()
+  }, [post?.content, comments])
 
-  const modalRef = useRef<HTMLDialogElement>(null);
-  const inputTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const modalRef = useRef<HTMLDialogElement>(null)
+  const inputTextareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const [commentStatus, setCommentStatus] = useState<string>("");
+  const [commentStatus, setCommentStatus] = useState<string>('')
 
   const { mutate, isLoading: mutateLoading } =
     useCreateNewCommentApiPostsCommentPost({
       mutation: {
         onSuccess: () => {
-          modalRef.current?.close();
-          queryClient.invalidateQueries({ queryKey: ["post"] });
+          modalRef.current?.close()
+          queryClient.invalidateQueries({ queryKey: ['post'] })
         },
         onError: (error) => {
           if (error.response?.status === 401) {
-            setCommentStatus("Você precisa estar logado para comentar!");
+            setCommentStatus('Você precisa estar logado para comentar!')
           }
         },
       },
-    });
+    })
 
   async function melhorResposta(id: number) {
     try {
       await bestCommentApiCommentsBestPut({
         comment_id: id,
         post_id: parsedPostID,
-      });
-      setAnswer();
-      queryClient.invalidateQueries({ queryKey: ["post"] });
+      })
+      setAnswer()
+      queryClient.invalidateQueries({ queryKey: ['post'] })
     } catch {
       // error handled silently
     }
   }
 
   if (isLoading) {
-    return <Loading />;
+    return <Loading />
   }
   if (isError) {
-    return <Error error={error} />;
+    return <Error error={error} />
   }
 
   return (
     <main className="w-full p-5 bg-slate-800 text-zinc-900 flex-1 relative">
       <ul className="h-fit flex flex-col">
         {post === undefined ? (
-          ""
+          ''
         ) : (
           <>
             {owner ? (
@@ -146,7 +146,7 @@ export function PostPage() {
                 name={post.title}
               />
             ) : (
-              ""
+              ''
             )}
             <PostComment.Root isMain={true} key={post.id}>
               <PostComment.Header
@@ -179,7 +179,7 @@ export function PostPage() {
                           />
                         </div>
                       ) : (
-                        ""
+                        ''
                       )}
                       <PostComment.Header
                         id={comment.id}
@@ -193,12 +193,12 @@ export function PostPage() {
                         {CommentMDCont[i]}
                       </PostComment.Content>
                       <PostComment.Footer
-                        nickname={comment.user?.nickname ?? ""}
+                        nickname={comment.user?.nickname ?? ''}
                         createdAt={comment.created_at}
                       />
                     </PostComment.Root>
                   </>
-                );
+                )
               })}
           </>
         )}
@@ -215,7 +215,7 @@ export function PostPage() {
             mutate({
               data: {
                 post_id: parsedPostID,
-                content: inputTextareaRef.current?.value ?? "",
+                content: inputTextareaRef.current?.value ?? '',
               },
             })
           }
@@ -225,5 +225,5 @@ export function PostPage() {
         </Modal.Root>
       </ul>
     </main>
-  );
+  )
 }
