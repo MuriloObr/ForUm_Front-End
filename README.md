@@ -19,3 +19,6 @@ Algumas libs que usei além são:
 ## Link para back-end do site
 
 - https://github.com/MuriloObr/ForUm_Back-End
+
+#### Archived
+Movido para outro [repositório](https://github.com/MuriloObr/ForUm)
