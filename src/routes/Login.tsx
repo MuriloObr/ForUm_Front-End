@@ -1,10 +1,9 @@
 import { useRef, useState } from 'react'
 import { Form } from '../components/Form'
-import { postData } from '../api/postFunctions'
+import { useLoginApiLoginPost } from '../api/generated/endpoints'
 import { useNavigate } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
 import { Question } from '@phosphor-icons/react'
-import { MyHoverCard } from '../components/MyHoverCard'
+import { MyHoverCard } from '../components/ui/MyHoverCard'
 import { LoadingSubmit } from '../components/LoadingSubmit'
 
 export function Login() {
@@ -15,27 +14,32 @@ export function Login() {
     message: '',
     color: 'white',
   })
-  const { mutate, isLoading } = useMutation({
-    mutationFn: login,
+
+  const { mutate, isLoading } = useLoginApiLoginPost({
+    mutation: {
+      onSuccess: () => navigate('/profile'),
+      onError: (error) => {
+        if (error.response?.status === 404) {
+          setRes({
+            message: 'Perfil não encontrado',
+            color: 'text-red-500',
+          })
+        }
+      },
+    },
   })
 
-  async function login() {
-    const res = await postData.login({
-      user: userRef.current?.value,
-      password: passwordRef.current?.value,
-    })
-    if (res.status === 200) {
-      navigate(`/profile`)
-    } else if (res.status === 204) {
-      setRes({
-        message: 'Perfil não encontrado',
-        color: 'text-red-500',
-      })
-    }
-  }
-
   return (
-    <Form.Root action={() => mutate()}>
+    <Form.Root
+      action={() =>
+        mutate({
+          data: {
+            user: userRef.current?.value ?? '',
+            password: passwordRef.current?.value ?? '',
+          },
+        })
+      }
+    >
       <Form.Field label="User" name="user" type="text" ref={userRef} />
       <Form.Field
         label="Password"

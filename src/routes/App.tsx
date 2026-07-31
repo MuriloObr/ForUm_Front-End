@@ -1,14 +1,15 @@
-/* eslint-disable camelcase */
 import { useContext, useRef, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { SearchContext } from '../context/SearchContext.tsx'
-import { getData } from '../api/getFunctions'
+import {
+  useGetAllPostsApiPostsGet,
+  useCreateNewPostApiPostsCreatePost,
+} from '../api/generated/endpoints'
 import { Post } from '../components/Post.tsx'
 import { Loading } from '../components/Loading'
 import { Error } from '../components/Error'
-import { AddButton } from '../components/AddButton'
-import { AddModal } from '../components/AddModal'
-import { postData } from '../api/postFunctions'
+import { AddButton } from '../components/ui/AddButton'
+import { Modal } from '../components/Modal'
 import { LoadingSubmit } from '../components/LoadingSubmit.tsx'
 
 export function App() {
@@ -17,15 +18,11 @@ export function App() {
     isError,
     data,
     error,
-  } = useQuery({
-    queryKey: ['posts'],
-    queryFn: getData.allPosts,
-    retry: 5,
-    staleTime: 30 * 60 * 1000, // 30 minute
-  })
-
-  const { mutate, isLoading: mutateLoading } = useMutation({
-    mutationFn: Postar,
+  } = useGetAllPostsApiPostsGet({
+    query: {
+      retry: 5,
+      staleTime: 30 * 60 * 1000,
+    },
   })
 
   const queryClient = useQueryClient()
@@ -33,33 +30,32 @@ export function App() {
   const { search } = useContext(SearchContext)
 
   const modalRef = useRef<HTMLDialogElement>(null)
-  const inputTittleRef = useRef<HTMLInputElement>(null)
+  const inputTitleRef = useRef<HTMLInputElement>(null)
   const inputTextareaRef = useRef<HTMLTextAreaElement>(null)
 
   const [postStatus, setPostStatus] = useState<string>('')
 
+  const { mutate, isLoading: mutateLoading } =
+    useCreateNewPostApiPostsCreatePost({
+      mutation: {
+        onSuccess: () => {
+          modalRef.current?.close()
+          queryClient.invalidateQueries({ queryKey: ['posts'] })
+        },
+        onError: (error) => {
+          if (error.response?.status === 401) {
+            setPostStatus('Você precisa estar logado para postar!')
+          }
+        },
+      },
+    })
+
   const filteredPosts =
     search.length > 0
-      ? data?.filter(({ tittle }) =>
-          tittle.toLowerCase().includes(search.toLowerCase()),
+      ? data?.filter(({ title }) =>
+          title.toLowerCase().includes(search.toLowerCase()),
         )
       : []
-
-  async function Postar() {
-    const post = async () => {
-      const tittle = inputTittleRef.current?.value
-      const content = inputTextareaRef.current?.value
-      const res = await postData.addNewPost({ tittle, content })
-      return res
-    }
-    const posted = await post()
-    if (posted === true) {
-      modalRef.current?.close()
-      queryClient.invalidateQueries({ queryKey: ['posts'] })
-      return
-    }
-    if (posted === 401) setPostStatus('Você precisa estar logado para postar!')
-  }
 
   if (dataLoading) {
     return <Loading />
@@ -73,23 +69,12 @@ export function App() {
       <ul className="h-fit flex flex-col gap-5">
         {search.length > 0 ? (
           filteredPosts?.map(
-            ({
-              id,
-              tittle,
-              content,
-              views,
-              likes,
-              user,
-              closed,
-              created_at,
-            }) => {
+            ({ id, title, content, user, is_closed, created_at }) => {
               return (
                 <Post.Root username={user.username} postID={id} key={id}>
-                  <Post.Header closed={closed}>{tittle}</Post.Header>
+                  <Post.Header closed={is_closed}>{title}</Post.Header>
                   <Post.Content>{content}</Post.Content>
                   <Post.Footer
-                    views={views.length}
-                    likes={likes.length}
                     createdAt={created_at}
                     nickname={user.nickname}
                   />
@@ -100,47 +85,38 @@ export function App() {
         ) : data === undefined ? (
           <div>No posts to see...</div>
         ) : (
-          data.map(
-            ({
-              id,
-              tittle,
-              content,
-              views,
-              likes,
-              user,
-              closed,
-              created_at,
-            }) => {
-              return (
-                <Post.Root username={user.username} postID={id} key={id}>
-                  <Post.Header closed={closed}>{tittle}</Post.Header>
-                  <Post.Content>{content.replaceAll('#', '')}</Post.Content>
-                  <Post.Footer
-                    views={views.length}
-                    likes={likes.length}
-                    createdAt={created_at}
-                    nickname={user.nickname}
-                  />
-                </Post.Root>
-              )
-            },
-          )
+          data.map(({ id, title, content, user, is_closed, created_at }) => {
+            return (
+              <Post.Root username={user.username} postID={id} key={id}>
+                <Post.Header closed={is_closed}>{title}</Post.Header>
+                <Post.Content>{content.replaceAll('#', '')}</Post.Content>
+                <Post.Footer createdAt={created_at} nickname={user.nickname} />
+              </Post.Root>
+            )
+          })
         )}
         <AddButton
           text="+ Post"
           className="mr-10"
           onClick={() => modalRef.current?.showModal()}
         />
-        <AddModal.Root
+        <Modal.Root
           ref={modalRef}
           res={postStatus}
           submitLabel="Postar"
-          onSubmit={() => mutate()}
+          onSubmit={() =>
+            mutate({
+              data: {
+                title: inputTitleRef.current?.value ?? '',
+                content: inputTextareaRef.current?.value ?? '',
+              },
+            })
+          }
         >
-          <AddModal.Field label="Titulo" type="text" ref={inputTittleRef} />
-          <AddModal.Area label="Conteúdo" withMD ref={inputTextareaRef} />
+          <Modal.Field label="Titulo" type="text" ref={inputTitleRef} />
+          <Modal.Area label="Conteúdo" withMD ref={inputTextareaRef} />
           <LoadingSubmit isLoading={mutateLoading} />
-        </AddModal.Root>
+        </Modal.Root>
       </ul>
     </main>
   )

@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { Check, X, Target, ThumbsUp, TrendUp } from '@phosphor-icons/react'
 import { PostProps } from '../types/typesComponents'
 
@@ -64,11 +65,11 @@ function Footer({ views, likes, nickname, createdAt }: PostProps['footer']) {
     <div className="mt-auto">
       <ul className="flex justify-between">
         <span className="mr-4 flex items-center gap-1 text-amber-500">
-          {verifyNumbers(likes / views, true)}
+          {verifyNumbers((likes ?? 0) / (views ?? 1), true)}
           <Target size={18} />
         </span>
         <span className="mr-4 flex items-center gap-1 text-blue-500">
-          {verifyNumbers(views)}
+          {verifyNumbers(views ?? 0)}
           <TrendUp size={18} />
         </span>
         <span className="mr-4 flex items-center gap-1 text-rose-500">

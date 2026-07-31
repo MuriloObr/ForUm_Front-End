@@ -1,4 +1,4 @@
-/* eslint-disable camelcase */
+/* eslint-disable react-refresh/only-export-components */
 import { getRandomAvatar } from '../api/randomAvatar'
 import { UserCompProps } from '../types/typesComponents'
 

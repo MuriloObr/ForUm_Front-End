@@ -7,7 +7,12 @@ import {
   FunnelSimple,
   CheckFat,
 } from '@phosphor-icons/react'
-import { postData } from '../api/postFunctions'
+import {
+  likePostApiPostsLikePost,
+  likeCommentApiCommentsLikePost,
+  unlikePostApiPostsLikeDelete,
+  unlikeCommentApiCommentsLikeDelete,
+} from '../api/generated/endpoints'
 import { useQueryClient } from '@tanstack/react-query'
 import { PostCommentProps } from '../types/typesComponents'
 
@@ -41,8 +46,8 @@ function Root({ children, isMain = false }: PostCommentProps['root']) {
 
 function Header({
   id,
-  tittle,
-  likes,
+  title,
+  likes = 0,
   isClosed,
   isMain = false,
 }: PostCommentProps['header']) {
@@ -55,16 +60,16 @@ function Header({
           size={32}
           className="border-transparent border rounded-md hover:border-zinc-500/70 transition-all cursor-pointer"
           onClick={async () => {
-            if (isMain) {
-              const req = await postData.likePost(id)
-              if (req === true)
-                queryClient.invalidateQueries({ queryKey: ['post'] })
-
-              return
-            }
-            const req = await postData.likeComment(id)
-            if (req === true)
+            try {
+              if (isMain) {
+                await likePostApiPostsLikePost({ post_id: id })
+              } else {
+                await likeCommentApiCommentsLikePost({ comment_id: id })
+              }
               queryClient.invalidateQueries({ queryKey: ['post'] })
+            } catch {
+              // error handled silently
+            }
           }}
         />
         <span className="select-none">{likes}</span>
@@ -72,22 +77,22 @@ function Header({
           size={32}
           className="border-transparent border rounded-md hover:border-zinc-500/70 transition-all cursor-pointer"
           onClick={async () => {
-            if (isMain) {
-              const req = await postData.rmlikePost(id)
-              if (req === true)
-                queryClient.invalidateQueries({ queryKey: ['post'] })
-
-              return
-            }
-            const req = await postData.rmlikeComment(id)
-            if (req === true)
+            try {
+              if (isMain) {
+                await unlikePostApiPostsLikeDelete({ post_id: id })
+              } else {
+                await unlikeCommentApiCommentsLikeDelete({ comment_id: id })
+              }
               queryClient.invalidateQueries({ queryKey: ['post'] })
+            } catch {
+              // error handled silently
+            }
           }}
         />
       </span>
       {isMain ? (
         <>
-          <h1 className="mr-auto text-2xl">{tittle}</h1>
+          <h1 className="mr-auto text-2xl">{title}</h1>
           <span
             className={
               'h-fit flex items-center gap-2 p-2 rounded-md text-white font-bold' +

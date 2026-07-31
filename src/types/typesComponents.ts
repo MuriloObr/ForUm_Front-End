@@ -56,8 +56,8 @@ export type PostProps = {
     children: ReactNode
   }
   footer: {
-    views: number
-    likes: number
+    views?: number
+    likes?: number
     nickname: string
     createdAt: string
   }
@@ -70,8 +70,8 @@ export type PostCommentProps = {
   }
   header: {
     id: number
-    tittle: string
-    likes: number
+    title: string
+    likes?: number
     isClosed: boolean
     isMain?: boolean
   }

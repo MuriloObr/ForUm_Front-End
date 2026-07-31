@@ -1,70 +1,60 @@
 /* eslint-disable import/no-absolute-path */
-import { useQuery } from '@tanstack/react-query'
-import { postData } from '../api/postFunctions'
-import searchIcon from '/searchSvg.svg'
-import { useContext } from 'react'
-import { SearchContext } from '../context/SearchContext'
+import searchIcon from "/searchSvg.svg";
+import { useContext } from "react";
+import { SearchContext } from "../context/SearchContext";
+import { useLoggedApiLoggedGet } from "../api/generated/endpoints";
 
 export function Header({ withoutSearchBar }: { withoutSearchBar?: true }) {
-  const { data } = useQuery({
-    queryKey: ['loggedIn'],
-    queryFn: postData.loggedIn,
-  })
+  const { data } = useLoggedApiLoggedGet();
 
-  const { search, setSearch } = useContext(SearchContext)
+  const { search, setSearch } = useContext(SearchContext);
 
   return (
-    <header className="p-3 flex items-center justify-between border-b-2 border-zinc-200">
-      <div className="flex items-center">
-        <img src="/forUm.svg" alt="Logo" className="h-10 w-10" />
-        <span className="font-bold text-2xl text-zinc-900 select-none">
+    <header className="p-4 flex items-center justify-between bg-zinc-900 border-b-2 border-zinc-600">
+      <div className="flex items-center gap-2">
+        <img src="/forUm.svg" alt="Logo" className="h-10 w-10 invert" />
+        <span className="font-black text-2xl text-white select-none">
           ForUm
         </span>
       </div>
       {withoutSearchBar ? (
-        ''
+        ""
       ) : (
-        <div className="sm:flex hidden items-center 2xl:w-[64%] lg:w-[55%] md:w-[42%] sm:w-[30%] ml-auto mr-5 py-1 px-2 bg-zinc-300/70 rounded-lg border border-[#fafafa] focus-within:border-zinc-900/50">
-          <img src={searchIcon} alt="Buscar" className="h-6 w-6" />
+        <div className="sm:flex hidden items-center 2xl:w-[64%] lg:w-[55%] md:w-[42%] sm:w-[30%] ml-auto mr-5 py-1.5 px-3 bg-zinc-800 rounded-lg border border-zinc-500 focus-within:border-zinc-300">
+          <img src={searchIcon} alt="Buscar" className="h-6 w-6 opacity-60" />
           <input
             type="text"
-            className="w-full ml-2 bg-transparent text-lg text-zinc-900 outline-none"
+            className="w-full ml-2 bg-transparent text-lg text-white placeholder-zinc-500 outline-none"
             value={search}
             onChange={(e) => setSearch(e.currentTarget.value)}
           />
         </div>
       )}
 
-      <nav className="text-xl text-zinc-900 flex 2xl:gap-x-12 sm:gap-x-2 gap-x-0">
+      <nav className="text-xl text-zinc-100 font-semibold flex 2xl:gap-x-8 sm:gap-x-2 gap-x-0">
         <a
           href={`/`}
-          className="py-1 sm:px-2 px-0.5 relative 
-          after:absolute after:inline-block after:inset-x-0 after:h-0.5 after:w-full after:top-1 after:scale-x-0 after:origin-left after:bg-zinc-900 after:transition-all
-          before:absolute before:inline-block before:inset-x-0 before:h-0.5 before:w-full before:bottom-1 before:scale-x-0 before:origin-right before:bg-zinc-900 before:transition-all
-          hover:after:scale-x-100 hover:before:scale-x-100"
+          className="py-1.5 sm:px-3 px-1 relative rounded-md transition-all duration-200 hover:bg-white/10 hover:text-white"
         >
-          Home
+          Posts
         </a>
         <a
           href={`/about`}
-          className="py-1 sm:px-2 px-0.5 relative 
-          after:absolute after:inline-block after:inset-x-0 after:h-0.5 after:w-full after:top-1 after:scale-x-0 after:origin-left after:bg-zinc-900 after:transition-all
-          before:absolute before:inline-block before:inset-x-0 before:h-0.5 before:w-full before:bottom-1 before:scale-x-0 before:origin-right before:bg-zinc-900 before:transition-all
-          hover:after:scale-x-100 hover:before:scale-x-100"
+          className="py-1.5 sm:px-3 px-1 relative rounded-md transition-all duration-200 hover:bg-white/10 hover:text-white"
         >
           Sobre
         </a>
         {!data ? (
-          <div className="flex">
+          <div className="flex gap-x-2">
             <a
               href={`/login`}
-              className="font-bold text-white bg-blue-500 py-1 px-2 rounded-l-lg border-2 border-r-0 border-black hover:brightness-90"
+              className="font-bold text-blue-400 bg-transparent py-1.5 px-3 rounded-md border-2 border-blue-400/60 hover:bg-blue-400/10 hover:border-blue-400 transition-all duration-150"
             >
               Logar
             </a>
             <a
               href={`/register`}
-              className="font-bold text-white bg-orange-500 py-1 px-2 rounded-r-lg border-2 border-l-0 border-black hover:brightness-90"
+              className="font-bold text-orange-400 bg-transparent py-1.5 px-3 rounded-md border-2 border-orange-400/60 hover:bg-orange-400/10 hover:border-orange-400 transition-all duration-150"
             >
               Registrar
             </a>
@@ -72,15 +62,12 @@ export function Header({ withoutSearchBar }: { withoutSearchBar?: true }) {
         ) : (
           <a
             href={`/profile`}
-            className="py-1 px-2 relative 
-            after:absolute after:inline-block after:inset-x-0 after:h-0.5 after:w-full after:top-1 after:scale-x-0 after:origin-left after:bg-zinc-900 after:transition-all
-            before:absolute before:inline-block before:inset-x-0 before:h-0.5 before:w-full before:bottom-1 before:scale-x-0 before:origin-right before:bg-zinc-900 before:transition-all
-            hover:after:scale-x-100 hover:before:scale-x-100"
+            className="py-1.5 sm:px-3 px-1 relative rounded-md transition-all duration-200 hover:bg-white/10 hover:text-white"
           >
             Profile
           </a>
         )}
       </nav>
     </header>
-  )
+  );
 }
